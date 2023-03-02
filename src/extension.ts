@@ -56,7 +56,12 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
 
                 // 如果文件名以tsx结尾, 就运行tsc脚本
                 if (fileName.endsWith(".tsx")) {
-                    const tsconfigPath = path.join(workspaceFolder, "tsconfig.json");
+                    let tsconfigPath = path.join(workspaceFolder, "tsconfig-ae.json");
+                    if (fs.existsSync(tsconfigPath)) {
+
+                    } else {
+                        tsconfigPath = path.join(workspaceFolder, "tsconfig.json");
+                    }
                     const tsConfigFile = fs.readFileSync(tsconfigPath, "utf8");
                     const tsConfig = JSON.parse(tsConfigFile);
 
