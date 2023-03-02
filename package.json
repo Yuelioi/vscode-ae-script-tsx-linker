@@ -2,17 +2,20 @@
     "name": "ae-tsx-runner",
     "displayName": "AE jsx && tsx Runner",
     "description": "Run Adobe After Effects .jsx or .tsx Script without ExtendScript Toolkit.",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "publisher": "yuelili",
     "repository": {
         "type": "git",
-        "url": "https://github.com/zpfz/vscode-ae-jsx-runner.git"
+        "url": "https://github.com/Yuelioi/vscode-ae-script-tsx-linker.git"
     },
     "engines": {
-        "vscode": "^1.5.0"
+        "vscode": "^1.75.0"
     },
     "categories": [
         "Other"
+    ],
+    "activationEvents": [
+        "onCommand:runrun.JSXScript"
     ],
     "keywords": [
         "ae",
@@ -60,13 +63,13 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "pnpm run package",
+        "vscode:prepublish": "npm run package",
         "compile": "webpack",
         "watch": "webpack --watch",
         "package": "webpack --mode production --devtool hidden-source-map",
         "compile-tests": "tsc -p . --outDir out",
         "watch-tests": "tsc -p . -w --outDir out",
-        "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+        "pretest": "npm run compile-tests && npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
         "test": "node ./out/test/runTest.js"
     },
@@ -95,5 +98,5 @@
         "vscode-nls": "^5.2.0"
     },
     "license": "MIT",
-    "homepage": "https://github.com/zpfz/vscode-ae-jsx-runner/"
+    "homepage": "https://github.com/Yuelioi/vscode-ae-script-tsx-linker"
 }

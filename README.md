@@ -2,13 +2,13 @@
 
 Run Adobe After Effects _.tsx / _.jsx Script without ExtendScript Toolkit.
 
-随着 ts 的广泛流传, 现在大家开发 ae 脚本很多都用 ts 了, 原插件 3 年没更新了, 就不 pr 了
-
 ## Requires
 
 [nodejs](https://nodejs.org/en/)
 
 tsc: npm install -g typescript
+
+[Types-for-Adobe](https://github.com/aenhancers/Types-for-Adobe)
 
 ## Support
 
@@ -53,4 +53,30 @@ src
 tsconfig.json
 ```
 
-tsconfig.json
+## tsconfig.json
+
+```txt
+{
+    "compilerOptions": {
+        "target": "ES3",
+        "strict": true,
+        "module": "None",
+        "noLib": true,
+        "noEmit": false,
+        "rootDirs": [
+            "./src"
+        ],
+        "outDir": "./dist",
+        "types": [
+            "./node_modules/types-for-adobe/AfterEffects/22.0",
+        ]
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
+```
