@@ -15,7 +15,7 @@ function getAePath() {
             const ps = child_process.spawn("powershell.exe", ["-Command", `(Get-WmiObject -class Win32_Process -Filter 'Name="AfterFX.exe"').path`]);
             let output = "";
 
-            ps.stdout.on("data", chunk => {
+            ps.stdout.on("data", (chunk) => {
                 output += chunk.toString();
             });
             ps.on("exit", () => {
@@ -31,7 +31,7 @@ function getAePath() {
                     reject("请启动 After Effects.");
                 }
             });
-            ps.on("error", err => {
+            ps.on("error", (err) => {
                 reject(err);
             });
             ps.stdin.end();
@@ -44,37 +44,33 @@ function getAePath() {
 function activate(context: { subscriptions: vscode.Disposable[] }) {
     const disposable = vscode.commands.registerCommand("runrun.JSXScript", () => {
         getAePath()
-            .then(async aePath => {
+            .then((aePath) => {
                 const activeEditor = vscode.window.activeTextEditor;
                 if (!activeEditor) {
-                    vscode.window.showErrorMessage('请打开至少一个文档');
+                    vscode.window.showErrorMessage("请打开至少一个文档");
                     return;
                 }
                 let filePath = activeEditor.document.uri.fsPath;
                 const fileName = activeEditor.document.fileName;
                 const workspaceFolder = (vscode.workspace.workspaceFolders as any)[0].uri.fsPath;
-
                 // 如果文件名以tsx结尾, 就运行tsc脚本
                 if (fileName.endsWith(".tsx")) {
-                    let tsconfigPath = path.join(workspaceFolder, "tsconfig-ae.json");
-                    if (fs.existsSync(tsconfigPath)) {
+                    const tsconfigPath = fs.existsSync(path.join(workspaceFolder, "tsconfig-ae.json"))
+                        ? path.join(workspaceFolder, "tsconfig-ae.json")
+                        : path.join(workspaceFolder, "tsconfig.json");
 
-                    } else {
-                        tsconfigPath = path.join(workspaceFolder, "tsconfig.json");
-                    }
                     const tsConfigFile = fs.readFileSync(tsconfigPath, "utf8");
-                    const tsConfig = JSON.parse(tsConfigFile);
 
                     // 查看有没有设置outDir 有则用
-                    const aeScriptDist = tsConfig["compilerOptions"]["outDir"] || "dist";
+                    const aeScriptDist = JSON.parse(tsConfigFile)["compilerOptions"]["outDir"] || "dist";
                     child_process.execSync(`tsc --project ${tsconfigPath}`);
                     const distFolder = path.join(workspaceFolder, aeScriptDist);
                     const fileBaseName = path.basename(fileName, ".tsx");
                     filePath = path.join(distFolder, `${fileBaseName}.jsx`);
                 }
+                aePath = (aePath as string).indexOf(" ") === -1 ? aePath : `"${aePath}"`;
 
                 if (fs.existsSync(filePath)) {
-                    aePath = (aePath as string).indexOf(" ") === -1 ? aePath : `"${aePath}"`;
                     child_process.exec(`${aePath} -r ${filePath}`, (err) => {
                         console.log(err);
                     });
@@ -82,7 +78,7 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                     showWarningMessage("请检查文件是否存在, 配置文件是否错误, 以及是否保存文件");
                 }
             })
-            .catch(err => {
+            .catch((err) => {
                 showWarningMessage(err);
             });
     });
