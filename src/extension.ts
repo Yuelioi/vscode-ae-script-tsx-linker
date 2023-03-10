@@ -44,34 +44,69 @@ function getAePath() {
 function activate(context: { subscriptions: vscode.Disposable[] }) {
     const disposable = vscode.commands.registerCommand("runrun.JSXScript", () => {
         getAePath()
-            .then((aePath) => {
+            .then(async (aePath) => {
                 const activeEditor = vscode.window.activeTextEditor;
                 if (!activeEditor) {
                     vscode.window.showErrorMessage("请打开至少一个文档");
                     return;
                 }
-                let filePath = activeEditor.document.uri.fsPath;
-                const fileName = activeEditor.document.fileName;
+                let inputFilePath = activeEditor.document.uri.fsPath;
+                const inputFileName = activeEditor.document.fileName;
                 const workspaceFolder = (vscode.workspace.workspaceFolders as any)[0].uri.fsPath;
+
                 // 如果文件名以tsx结尾, 就运行tsc脚本
-                if (fileName.endsWith(".tsx")) {
-                    const tsconfigPath = fs.existsSync(path.join(workspaceFolder, "tsconfig-ae.json"))
-                        ? path.join(workspaceFolder, "tsconfig-ae.json")
-                        : path.join(workspaceFolder, "tsconfig.json");
+                if (inputFileName.endsWith(".tsx")) {
+                    let distFolder = "dist";
+                    let tsConfigFile: string | undefined;
 
-                    const tsConfigFile = fs.readFileSync(tsconfigPath, "utf8");
+                    // 判断使用哪个配置文件
+                    if (fs.existsSync(path.join(workspaceFolder!, "tsconfig-ae.json"))) {
+                        tsConfigFile = "tsconfig-ae.json";
+                    } else if (fs.existsSync(path.join(workspaceFolder!, "tsconfig.json"))) {
+                        tsConfigFile = "tsconfig.json";
+                    }
 
-                    // 查看有没有设置outDir 有则用
-                    const aeScriptDist = JSON.parse(tsConfigFile)["compilerOptions"]["outDir"] || "dist";
-                    child_process.execSync(`tsc --project ${tsconfigPath}`);
-                    const distFolder = path.join(workspaceFolder, aeScriptDist);
-                    const fileBaseName = path.basename(fileName, ".tsx");
-                    filePath = path.join(distFolder, `${fileBaseName}.jsx`);
+                    // 如果有配置文件, 就获取导出文件夹
+                    if (tsConfigFile) {
+                        try {
+                            const tsConfig = require(path.join(workspaceFolder, tsConfigFile));
+                            distFolder = tsConfig.compilerOptions.outDir || distFolder;
+                        } catch {
+                            // do nothing
+                        }
+                    }
+
+                    const distFolderPath = path.join(workspaceFolder, distFolder);
+                    const outFileBaseName = path.basename(inputFileName, ".tsx");
+                    const outFilePath = `${distFolder}/${outFileBaseName}.jsx`;
+                    try {
+                        // 查看有没有使用rollup
+                        const rollupConfigPath = path.join(workspaceFolder, "rollup.config-ae.js");
+                        if (fs.existsSync(rollupConfigPath)) {
+                            const content = {
+                                input: inputFilePath,
+                                output: outFilePath,
+                            };
+                            const rollupPath = path.join(workspaceFolder, "node_modules", ".bin", "rollup");
+                            console.log(rollupPath);
+                            fs.writeFileSync(path.join(workspaceFolder, "tsx-link.json"), JSON.stringify(content));
+                            child_process.execSync(`${rollupPath} -c ${rollupConfigPath}`, {
+                                cwd: workspaceFolder,
+                            });
+                        } else {
+                            child_process.execSync(`tsc --project ${tsConfigFile}`, {
+                                cwd: workspaceFolder,
+                            });
+                        }
+                    } catch (err) {
+                        console.log(err);
+                    }
+                    inputFilePath = path.join(workspaceFolder, outFilePath);
                 }
-                aePath = (aePath as string).indexOf(" ") === -1 ? aePath : `"${aePath}"`;
-
-                if (fs.existsSync(filePath)) {
-                    child_process.exec(`${aePath} -r ${filePath}`, (err) => {
+                console.log(inputFilePath);
+                if (fs.existsSync(inputFilePath)) {
+                    aePath = (aePath as string).indexOf(" ") === -1 ? aePath : `"${aePath}"`;
+                    child_process.exec(`${aePath} -r ${inputFilePath}`, (err) => {
                         console.log(err);
                     });
                 } else {

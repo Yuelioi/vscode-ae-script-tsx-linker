@@ -2,8 +2,8 @@
 
 ## Platform
 
-- Windows
-- Mac Os (not supported yet)
+-   Windows
+-   Mac Os (not supported yet)
 
 ## Usage
 
@@ -15,13 +15,13 @@ Open Adobe After Effects, and open `.jsx` or `.tsx` file in vscode, you can get 
 
 1. make sure you have a `ts` environment (nodejs...)
 2. make sure you get a right tsconfig-ae.json/tsconfig.json configuration file( if you don't have a `tsconfig-ae.json`, extension will use `tsconfig.json` instead)
-3. `tsconfig.json` donot add extra commas (like this {... [ opA:1, opB:2,] ...})  
+3. `tsconfig.json` donot add extra commas (like this {... [ opA:1, opB:2,] ...})
 
 ## How it works
 
 1. Use child_process to retrieve the location of the running After Effects application.
-2. Search for the `tsconfig-ae.json` file, if not found, fall back to using `tsconfig.json`.
-3. Search for the `rollup.config.js` file, if found, use `rollup -c` to compile.
+2. Search for the `tsconfig-ae.json` file, if not found, fall back to using `tsconfig.json`. to get the `outDir` option.
+3. Search for the `rollup.config.js` file, if found, create ` tsx-link.json` file, write `input` and `output` , then use `rollup -c` to compile.(replace using `tsc`)
 4. Run the final script.
 
 ## tsconfig.json
@@ -32,56 +32,29 @@ Open Adobe After Effects, and open `.jsx` or `.tsx` file in vscode, you can get 
 
 [types-for-adobe](https://github.com/aenhancers/Types-for-Adobe) :AE Script type support
 
-your `tsconfig-dev.json`  (for testing your ont script) like:
+your `tsconfig-ae.json` (for testing your ae script) like:
 
 ```json
 {
     "compilerOptions": {
         "target": "ES3",
+        "ignoreDeprecations": "5.0",
         "strict": true,
-        "module": "None",
         "noLib": true,
         "outDir": "./dist",
         "jsx": "preserve",
-        "types": [
-            "./node_modules/types-for-adobe/AfterEffects/22.0"
-        ]
+        "useDefineForClassFields": false,
+        "noUnusedParameters": true,
+        "noUnusedLocals": true,
+        "skipLibCheck": true,
+        "allowSyntheticDefaultImports": true,
+        "noEmit": false,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "types": ["./node_modules/types-for-adobe/AfterEffects/22.0"]
     },
-    "include": [
-        "src/test/*.tsx"
-    ],
-}
-```
-
-your `tsconfig.json`:
-
-```json
-{
-    "compilerOptions": {
-        "target": "ES3",
-        "strict": true,
-        "module": "None",
-        "noLib": true,
-        "outDir": "./dist",
-        "jsx": "preserve",
-        "types": [
-            "./node_modules/types-for-adobe/AfterEffects/22.0"
-        ]
-    },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.tsx"
-    ]
-}
-
-your `tsconfig-build.json`:
-
-```json
-{
-    "extends": "./tsconfig-dev.json",
-    "compilerOptions": {
-        "removeComments": true
-    }
+    "include": ["src/**/*.ts", "src/**/*.tsx"],
+    "exclude": ["node_modules"]
 }
 ```
 
@@ -89,46 +62,58 @@ your `tsconfig-build.json`:
 
 [Rollup](https://rollupjs.org/introduction/) is a module bundler for JavaScript which compiles small pieces of code into something larger and more complex.
 
-▷
-
-install
+▷ install
 
 ```txt
-npm install typescript rollup rollup-plugin-typescript2 rollup-plugin-uglify --save-dev
+npm install typescript rollup rollup-plugin-typescript2 --save-dev
 ```
 
-rollup.config.js
+▷ rollup.config.js
 
 ```javascript
 import typescript from "rollup-plugin-typescript2";
-import { uglify } from "rollup-plugin-uglify";
+import rollup_json from "rollup-plugin-json";
+import * as fs from "fs";
 
-export default {
-  input: "src/main.ts",
-  output: {
-    file: "dist/bundle.js",
-    format: "iife",
-    name: "MyApp"
-  },
-  plugins: [
-    typescript(),
-    uglify()
-  ]
+// tsk-link.json(插件会自动生成) : 输入输出文件路径
+
+const readJSONFile = (filePath) => {
+    const data = fs.readFileSync(filePath, { encoding: "utf8" });
+    return JSON.parse(data);
 };
 
+const tsx_link = readJSONFile("./tsx-link.json");
+
+export default {
+    input: tsx_link["input"],
+    output: {
+        file: tsx_link["output"],
+        format: "iife",
+        name: "MyApp",
+    },
+    plugins: [
+        typescript({
+            tsconfig: "tsconfig.json",
+        }),
+        rollup_json(),
+    ],
+};
 ```
 
 ## sample file containing
 
 ```txt
-.vscode
+/.vscode
 dist
 src
---lib
---public
---test
----main.tsx
-tsconfig-ae.json/tsconfig.json
+--/lib
+--/public
+--/utils
+--main.tsx
+tsconfig-ae.json
+tsconfig.json
+rollup.config.js
+tsx-link.json(auto generate)
 ```
 
 ## Reference
@@ -136,3 +121,7 @@ tsconfig-ae.json/tsconfig.json
 [atarabi.ae-script-runner](https://marketplace.visualstudio.com/items?itemName=atarabi.ae-script-runner)
 
 [vscode-ae-script-linker](https://github.com/zpfz/vscode-ae-script-linker)
+
+```
+
+```
