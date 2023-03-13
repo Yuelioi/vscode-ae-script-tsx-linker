@@ -76,7 +76,7 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                         }
                     }
 
-                    const distFolderPath = path.join(workspaceFolder, distFolder);
+                    // 获取源文件纯名称
                     const outFileBaseName = path.basename(inputFileName, ".tsx");
                     const outFilePath = `${distFolder}/${outFileBaseName}.jsx`;
                     try {
@@ -88,9 +88,8 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                                 output: outFilePath,
                             };
                             const rollupPath = path.join(workspaceFolder, "node_modules", ".bin", "rollup");
-                            console.log(rollupPath);
                             fs.writeFileSync(path.join(workspaceFolder, "tsx-link.json"), JSON.stringify(content));
-                            child_process.execSync(`${rollupPath} -c ${rollupConfigPath}`, {
+                            child_process.execSync(`"${rollupPath}" -c "${rollupConfigPath}"`, {
                                 cwd: workspaceFolder,
                             });
                         } else {
@@ -103,7 +102,6 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                     }
                     inputFilePath = path.join(workspaceFolder, outFilePath);
                 }
-                console.log(inputFilePath);
                 if (fs.existsSync(inputFilePath)) {
                     aePath = (aePath as string).indexOf(" ") === -1 ? aePath : `"${aePath}"`;
                     child_process.exec(`${aePath} -r ${inputFilePath}`, (err) => {
