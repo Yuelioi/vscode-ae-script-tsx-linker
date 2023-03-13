@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [0.4.0] - 2023-03-10
+
+- Rollup Supported
+
 ## [0.3.0] - 2023-03-02
 
 - Add Run Icon

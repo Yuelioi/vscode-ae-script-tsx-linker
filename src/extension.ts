@@ -81,7 +81,7 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                     const outFilePath = `${distFolder}/${outFileBaseName}.jsx`;
                     try {
                         // 查看有没有使用rollup
-                        const rollupConfigPath = path.join(workspaceFolder, "rollup.config-ae.js");
+                        const rollupConfigPath = path.join(workspaceFolder, "rollup.config.js");
                         if (fs.existsSync(rollupConfigPath)) {
                             const content = {
                                 input: inputFilePath,

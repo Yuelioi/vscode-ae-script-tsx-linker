@@ -2,8 +2,8 @@
 
 ## Platform
 
--   Windows
--   Mac Os (not supported yet)
+- Windows
+- Mac Os (not supported yet)
 
 ## Usage
 
@@ -21,7 +21,7 @@ Open Adobe After Effects, and open `.jsx` or `.tsx` file in vscode, you can get 
 
 1. Use child_process to retrieve the location of the running After Effects application.
 2. Search for the `tsconfig-ae.json` file, if not found, fall back to using `tsconfig.json`. to get the `outDir` option.
-3. Search for the `rollup.config.js` file, if found, create ` tsx-link.json` file, write `input` and `output` , then use `rollup -c` to compile.(replace using `tsc`)
+3. Search for the `rollup.config.js` file, if found, create `tsx-link.json` file, write `input` and `output` , then use `rollup -c` to compile.(replace using `tsc`)
 4. Run the final script.
 
 ## tsconfig.json
@@ -32,7 +32,7 @@ Open Adobe After Effects, and open `.jsx` or `.tsx` file in vscode, you can get 
 
 [types-for-adobe](https://github.com/aenhancers/Types-for-Adobe) :AE Script type support
 
-your `tsconfig-ae.json` (for testing your ae script) like:
+your `tsconfig.json` (for testing your ae script) like:
 
 ```json
 {
@@ -66,6 +66,17 @@ your `tsconfig-ae.json` (for testing your ae script) like:
 
 ```txt
 npm install typescript rollup rollup-plugin-typescript2 --save-dev
+```
+
+▷  Import Sample
+
+```typescript
+// A.tsx
+export const str = "Hello World";
+
+// B.tsx
+import {num} from "./A"
+alert(str)
 ```
 
 ▷ rollup.config.js
