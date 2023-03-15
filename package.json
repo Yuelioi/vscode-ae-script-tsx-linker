@@ -41,21 +41,21 @@
         "menus": {
             "editor/title": [
                 {
-                    "when": "resourceExtname == .jsx || resourceExtname == .tsx",
+                    "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
                     "command": "runrun.JSXScript",
                     "group": "navigation"
                 }
             ],
             "editor/context": [
                 {
-                    "when": "resourceExtname == .jsx || resourceExtname == .tsx",
+                    "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
                     "command": "runrun.JSXScript",
                     "group": "navigation"
                 }
             ],
             "editor/title/context": [
                 {
-                    "when": "resourceExtname == .jsx || resourceExtname == .tsx",
+                    "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
                     "command": "runrun.JSXScript",
                     "group": "navigation"
                 }

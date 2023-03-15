@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [0.5.0] - 2023-03-15
+
+- .Jsxbin Supported
+- Fix `blank space` file path
+
 ## [0.4.0] - 2023-03-10
 
 - Rollup Supported
