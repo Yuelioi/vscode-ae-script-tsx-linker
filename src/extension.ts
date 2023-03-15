@@ -75,10 +75,10 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                             // do nothing
                         }
                     }
-
                     // 获取源文件纯名称以及输出文件路径
                     const outFileBaseName = path.basename(inputFileName, ".tsx");
                     const outFilePath = `${distFolder}/${outFileBaseName}.jsx`;
+
                     try {
                         // 查看有没有使用rollup
                         const rollupConfigPath = path.join(workspaceFolder, "rollup.config.js");
@@ -89,26 +89,12 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                             };
                             const rollupPath = path.join(workspaceFolder, "node_modules", ".bin", "rollup");
                             fs.writeFileSync(path.join(workspaceFolder, "tsx-link.json"), JSON.stringify(content));
-                            const child = child_process.spawn(rollupPath, ["-c", rollupConfigPath], {
+
+                            child_process.execSync(`"${rollupPath}" -c "${rollupConfigPath}"`, {
                                 cwd: workspaceFolder,
                             });
 
                             // TODO: 输出调试信息
-
-                            child.stdout.on("data", (data) => {
-                                console.log(`rollup-out: ${data}`);
-                                showWarningMessage("roll out");
-                            });
-
-                            child.stderr.on("data", (data) => {
-                                console.error(`rollup-err: ${data}`);
-                                showWarningMessage("roll err");
-                            });
-
-                            child.on("close", (code) => {
-                                console.log(`rollup-close：${code}`);
-                                showWarningMessage("roll close");
-                            });
                         } else {
                             child_process.execSync(`tsc --project ${tsConfigFile}`, {
                                 cwd: workspaceFolder,
@@ -121,7 +107,7 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                 }
                 if (fs.existsSync(inputFilePath)) {
                     aePath = (aePath as string).indexOf(" ") === -1 ? aePath : `"${aePath}"`;
-                    child_process.exec(`${aePath} -r ${"inputFilePath"}`, (err) => {
+                    child_process.exec(`${aePath} -r ${inputFilePath}`, (err) => {
                         console.log(err);
                     });
                 } else {
