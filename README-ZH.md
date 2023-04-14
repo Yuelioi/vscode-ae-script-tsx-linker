@@ -1,50 +1,50 @@
-# After Effects .jsx Script Runner (tsx version)
+# After Effects 脚本运行器
 
 [English introduction](./README-ZH.md) | [中文介绍](./README-ZH.md)
 
-## Platform
+## 平台
 
 - Windows
-- Mac Os (not supported yet)
+- Mac Os (没有Mac 不会写)
 
-## Features
+## 特性
 
-- Run .jsx, .jsxbin, and .tsx script files.
-- Multiple version detection: If only one instance of After Effects is running, the script will run directly. If multiple instances are running, a prompt will appear asking you to choose which version to test.
+- 运行.jsx, .jsxbin, and .tsx 脚本文件.
+- 多版本检测,如果只启动一个ae则直接运行脚本,如果启动多个版本, 会提示你选择哪个版本进行测试
 
-## Usage
+## 用法
 
-To access the command in the editor title, context menu, or command panel, launch Adobe After Effects and open a .jsx or .tsx file in VS Code.
+打开ae, 在vsc中打开脚本文件,运行即可
 
-Command:
+命令位置如下:
 
 <div align=center><img src="./preview/pic.png" /></div>
 
-Testing with multiple versions of After Effects:
+运行中的多版本ae检测:
 
 <div align=center><img src="./preview/aes.png" /></div>
 
-## fail?
+## 失败了?
 
-1. make sure you have a `ts` environment (nodejs...)
-2. make sure you get a right tsconfig-ae.json/tsconfig.json configuration file( if you don't have a `tsconfig-ae.json`, extension will use `tsconfig.json` instead)
+1. 确保有 `ts` 环境 (nodejs之类的)
+2. tsconfig-ae.json或tsconfig.json 配置正确
 
-## How it works
+## 工作原理
 
-1. Retrieve the location of the running After Effects application using child_process.
-2. If the `tsconfig-ae.json` file is not found, use `tsconfig.json` to get the outDir option.
-3. Look for the rollup.config.js file. If found, create a `tsx-link.json` file, write input and output, and then compile using `rollup -c` (instead of tsc).
-4. Run the final script.
+1. 使用node的child_process获取正在运行的ae路径
+2. 用 `tsconfig-ae.json`(优先)或者 `tsconfig.json` 获取 `outDir` 配置.
+3. 查找 `rollup.config.js`文件. 如果有则创建 `tsx-link.json` 临时文件(用于保存要运行的脚本路径), 然后执行 `rollup -c`
+4. 使用命令行运行ae脚本(AfterFx.exe位置 -r 脚本位置)
 
 ## tsconfig.json
 
-`outDir`: AE Script run directory
+`outDir`: 脚本编译后的文件夹
 
-`ES3`: AE Script version
+`ES3`: AE脚本的js版本
 
-[types-for-adobe](https://github.com/aenhancers/Types-for-Adobe) :AE Script type support
+[types-for-adobe](https://github.com/aenhancers/Types-for-Adobe) :AE脚本类型支持
 
-your `tsconfig.json` (for testing your ae script) like:
+`tsconfig.json` 示例:
 
 ```json
 {
@@ -72,15 +72,15 @@ your `tsconfig.json` (for testing your ae script) like:
 
 ## rollup
 
-[Rollup](https://rollupjs.org/introduction/) is a module bundler for JavaScript which compiles small pieces of code into something larger and more complex.
+[Rollup](https://rollupjs.org/introduction/) 是一个用于 JavaScript 的模块打包器，它可以将小块代码编译成更大更复杂的代码。
 
-▷ install
+▷ 安装
 
 ```txt
 npm install typescript rollup rollup-plugin-typescript2 --save-dev
 ```
 
-▷  Import Sample
+▷  Import 示例
 
 ```typescript
 // A.tsx
@@ -91,7 +91,7 @@ import {num} from "./A"
 alert(str)
 ```
 
-▷ rollup.config.js
+▷ rollup.config.js 配置示例
 
 ```javascript
 import typescript from "rollup-plugin-typescript2";
@@ -123,7 +123,7 @@ export default {
 };
 ```
 
-## sample file containing
+## 文件结构示例
 
 ```txt
 /.vscode
@@ -139,7 +139,7 @@ rollup.config.js
 tsx-link.json(auto generate)
 ```
 
-## Reference
+## 参考
 
 [atarabi.ae-script-runner](https://marketplace.visualstudio.com/items?itemName=atarabi.ae-script-runner)
 
