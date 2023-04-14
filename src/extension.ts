@@ -12,39 +12,76 @@ function showWarningMessage(message: string) {
 function getAePath() {
     return new Promise((resolve, reject) => {
         if (win32) {
-            const ps = child_process.spawn("powershell.exe", ["-Command", `(Get-WmiObject -class Win32_Process -Filter 'Name="AfterFX.exe"').path`]);
-            let output = "";
+            const psScript = `
+                $AfterProcess = Get-WmiObject -Class Win32_Process -Filter 'Name="AfterFX.exe"' | Select-Object -ExpandProperty Path
 
-            ps.stdout.on("data", (chunk) => {
-                output += chunk.toString();
-            });
-            ps.on("exit", () => {
-                const aePaths = [];
-                for (let aePath of output.split(/\r\n|\r|\n/)) {
-                    if (aePath) {
-                        aePaths.push(aePath);
+                $ae = Get-ChildItem 'HKLM:\\SOFTWARE\\Adobe\\After Effects' |
+                Select-Object -ExpandProperty Name |
+                ForEach-Object {
+                    $name = $_ -replace 'HKEY_LOCAL_MACHINE\\\\SOFTWARE\\\\Adobe\\\\After Effects\\\\'
+                    $InstallPath = (Get-ItemPropertyValue ('HKLM:\\\\SOFTWARE\\\\Adobe\\\\After Effects\\\\' + $name) -Name "InstallPath") + 'AfterFX.exe'
+                    if ($AfterProcess -contains $InstallPath) {
+                        @{label = $name; description = $InstallPath }
                     }
                 }
-                if (aePaths.length) {
-                    resolve(aePaths[0]);
+
+                Write-Output ($ae | ConvertTo-Json -Compress)
+                `;
+
+            const ps = child_process.spawn("powershell.exe", ["-command", "-"], {
+                stdio: ["pipe", "pipe", "pipe"],
+            });
+
+            let output = "";
+            ps.stdout.on("data", (data) => {
+                output += data.toString();
+            });
+
+            ps.stdin.write(psScript);
+            ps.stdin.write("\n"); // 添加一个换行符表示 PowerShell 脚本已经结束
+            ps.stdin.end();
+
+            ps.on("close", (code) => {
+                if (code === 0) {
+                    const result = JSON.parse(output);
+                    resolve(result);
                 } else {
-                    reject("请启动 After Effects.");
+                    console.error(`PowerShell 进程结束时出错，退出码：${code}`);
                 }
             });
-            ps.on("error", (err) => {
-                reject(err);
-            });
-            ps.stdin.end();
         } else {
             reject(`暂不支持该系统`);
         }
     });
 }
 
+async function selectAePath(aePaths: any) {
+    let aePath;
+    if (Array.isArray(aePaths)) {
+        const selection = await vscode.window.showQuickPick(aePaths, {
+            placeHolder: "请选择一个选项",
+            ignoreFocusOut: true,
+        });
+        if (selection) {
+            aePath = selection.description;
+        } else {
+            return null;
+        }
+    } else {
+        aePath = aePaths.description;
+    }
+    return aePath;
+}
+
 function activate(context: { subscriptions: vscode.Disposable[] }) {
     const disposable = vscode.commands.registerCommand("runrun.JSXScript", () => {
         getAePath()
-            .then(async (aePath) => {
+            .then(async (aePaths: any) => {
+                let aePath = await selectAePath(aePaths);
+                if (!aePath) {
+                    return;
+                }
+                console.log(aePath);
                 const activeEditor = vscode.window.activeTextEditor;
                 if (!activeEditor) {
                     vscode.window.showErrorMessage("请打开至少一个文档");
@@ -75,10 +112,10 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                             // do nothing
                         }
                     }
-
-                    // 获取源文件纯名称
+                    // 获取源文件纯名称以及输出文件路径
                     const outFileBaseName = path.basename(inputFileName, ".tsx");
                     const outFilePath = `${distFolder}/${outFileBaseName}.jsx`;
+
                     try {
                         // 查看有没有使用rollup
                         const rollupConfigPath = path.join(workspaceFolder, "rollup.config.js");
@@ -89,9 +126,12 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                             };
                             const rollupPath = path.join(workspaceFolder, "node_modules", ".bin", "rollup");
                             fs.writeFileSync(path.join(workspaceFolder, "tsx-link.json"), JSON.stringify(content));
+
                             child_process.execSync(`"${rollupPath}" -c "${rollupConfigPath}"`, {
                                 cwd: workspaceFolder,
                             });
+
+                            // TODO: 输出调试信息
                         } else {
                             child_process.execSync(`tsc --project ${tsConfigFile}`, {
                                 cwd: workspaceFolder,
@@ -103,12 +143,12 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                     inputFilePath = path.join(workspaceFolder, outFilePath);
                 }
                 if (fs.existsSync(inputFilePath)) {
-                    aePath = (aePath as string).indexOf(" ") === -1 ? aePath : `"${aePath}"`;
-                    child_process.exec(`${aePath} -r ${inputFilePath}`, (err) => {
+                    console.log(`"${aePath}" -r ${inputFilePath}`);
+                    child_process.exec(`"${aePath}" -r ${inputFilePath}`, (err) => {
                         console.log(err);
                     });
                 } else {
-                    showWarningMessage("请检查文件是否存在, 配置文件是否错误, 以及是否保存文件");
+                    showWarningMessage("请检查文件/配置文件/语法是否错误");
                 }
             })
             .catch((err) => {

@@ -2,7 +2,7 @@
     "name": "ae-tsx-runner",
     "displayName": "Adobe AE jsx && tsx Runner",
     "description": "Run Adobe After Effects jsx or tsx Script without ExtendScript Toolkit.",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "publisher": "yuelili",
     "repository": {
         "type": "git",
@@ -41,21 +41,21 @@
         "menus": {
             "editor/title": [
                 {
-                    "when": "resourceExtname == .jsx || resourceExtname == .tsx",
+                    "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
                     "command": "runrun.JSXScript",
                     "group": "navigation"
                 }
             ],
             "editor/context": [
                 {
-                    "when": "resourceExtname == .jsx || resourceExtname == .tsx",
+                    "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
                     "command": "runrun.JSXScript",
                     "group": "navigation"
                 }
             ],
             "editor/title/context": [
                 {
-                    "when": "resourceExtname == .jsx || resourceExtname == .tsx",
+                    "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
                     "command": "runrun.JSXScript",
                     "group": "navigation"
                 }
@@ -67,6 +67,8 @@
         "compile": "webpack",
         "watch": "webpack --watch",
         "package": "webpack --mode production --devtool hidden-source-map",
+        "package2": "vsce package",
+        "publish": "vsce publish",
         "compile-tests": "tsc -p . --outDir out",
         "watch-tests": "tsc -p . -w --outDir out",
         "pretest": "npm run compile-tests && npm run compile && npm run lint",

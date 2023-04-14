@@ -95,10 +95,9 @@ alert(str)
 
 ```javascript
 import typescript from "rollup-plugin-typescript2";
-import rollup_json from "rollup-plugin-json";
 import * as fs from "fs";
 
-// tsk-link.json(插件会自动生成) : 输入输出文件路径
+// tsk-link.json(auto generate) 
 
 const readJSONFile = (filePath) => {
     const data = fs.readFileSync(filePath, { encoding: "utf8" });
@@ -118,7 +117,6 @@ export default {
         typescript({
             tsconfig: "tsconfig.json",
         }),
-        rollup_json(),
     ],
 };
 ```
