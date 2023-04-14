@@ -139,6 +139,20 @@ rollup.config.js
 tsx-link.json(auto generate)
 ```
 
+## 更新记录
+
+- 0.6.0 - 2023-04-11: 支持多版本Ae(运行中的)
+
+- 0.5.0 - 2023-03-15: 支持 .Jsxbin 文件
+
+- 0.4.0 - 2023-03-10: 支持 Rollup
+
+- 0.3.0 - 2023-03-02: 添加运行按钮
+
+- 0.2.0 - 2023-03-02: 支持自定义ts配置 (tsconfgi-ae.json)
+
+- 0.1.0 - 2023-03-01: 支持ts
+
 ## 参考
 
 [atarabi.ae-script-runner](https://marketplace.visualstudio.com/items?itemName=atarabi.ae-script-runner)
