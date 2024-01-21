@@ -24,6 +24,13 @@ Testing with multiple versions of After Effects:
 
 <div align=center><img src="./preview/aes.png" /></div>
 
+
+## Demo
+
+please clone this git ↓
+
+[Yuelioi/Adobe-Scripting-With-Typescript-Demo](https://github.com/Yuelioi/Adobe-Scripting-With-Typescript-Demo)
+
 ## fail?
 
 1. make sure you have a `ts` environment (nodejs...)
@@ -35,6 +42,8 @@ Testing with multiple versions of After Effects:
 2. If the `tsconfig-ae.json` file is not found, use `tsconfig.json` to get the outDir option.
 3. Look for the rollup.config.js file. If found, create a `tsx-link.json` file, write input and output, and then compile using `rollup -c` (instead of tsc).
 4. Run the final script.
+
+
 
 ## tsconfig.json
 
