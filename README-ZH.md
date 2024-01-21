@@ -24,6 +24,12 @@
 
 <div align=center><img src="./preview/aes.png" /></div>
 
+## 示例
+
+请clone本示例进行你的第一个项目
+
+[Yuelioi/Adobe-Scripting-With-Typescript-Demo](https://github.com/Yuelioi/Adobe-Scripting-With-Typescript-Demo)
+
 ## 失败了?
 
 1. 确保有 `ts` 环境 (nodejs之类的)
