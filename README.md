@@ -24,26 +24,23 @@ Testing with multiple versions of After Effects:
 
 <div align=center><img src="./preview/aes.png" /></div>
 
-
 ## Demo
 
-please clone this git ↓
+please clone this for your first project ↓
 
 [Yuelioi/Adobe-Scripting-With-Typescript-Demo](https://github.com/Yuelioi/Adobe-Scripting-With-Typescript-Demo)
 
 ## fail?
 
 1. make sure you have a `ts` environment (nodejs...)
-2. make sure you get a right tsconfig-ae.json/tsconfig.json configuration file( if you don't have a `tsconfig-ae.json`, extension will use `tsconfig.json` instead)
+2. make sure you get a right tsconfig.json configuration file
 
 ## How it works
 
 1. Retrieve the location of the running After Effects application using child_process.
-2. If the `tsconfig-ae.json` file is not found, use `tsconfig.json` to get the outDir option.
-3. Look for the rollup.config.js file. If found, create a `tsx-link.json` file, write input and output, and then compile using `rollup -c` (instead of tsc).
+2. Look for `tsconfig.json` to get the outDir option.
+3. Look for `rollup.config.js` file. If found, create a `tsx-link.json`file, write input and output, and then compile using `rollup -c` (instead of tsc).
 4. Run the final script.
-
-
 
 ## tsconfig.json
 
@@ -79,7 +76,7 @@ your `tsconfig.json` (for testing your ae script) like:
 }
 ```
 
-## rollup
+## rollup (for ts)
 
 [Rollup](https://rollupjs.org/introduction/) is a module bundler for JavaScript which compiles small pieces of code into something larger and more complex.
 
@@ -149,15 +146,10 @@ tsx-link.json(auto generate)
 ## CHANGELOG
 
 - 0.6.0 - 2023-04-11: Checking software version currently running.
-
 - 0.5.0 - 2023-03-15: .Jsxbin Supported
-
 - 0.4.0 - 2023-03-10: Rollup Supported
-
 - 0.3.0 - 2023-03-02: Add Run Icon
-
 - 0.2.0 - 2023-03-02: Custom tsconfig supported (tsconfgi-ae.json)
-
 - 0.1.0 - 2023-03-01: Ts Supported
 
 ## Reference
