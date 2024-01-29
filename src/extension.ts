@@ -58,14 +58,36 @@ function getAePath() {
 async function selectAePath(aePaths: any) {
     let aePath;
     if (Array.isArray(aePaths)) {
-        const selection = await vscode.window.showQuickPick(aePaths, {
-            placeHolder: "请选择一个选项",
-            ignoreFocusOut: true,
-        });
-        if (selection) {
-            aePath = selection.description;
+        const config = vscode.workspace.getConfiguration("ae-tsx-runner");
+
+        // 查找.vscode/settings 下有没有 tsxRunner.hostSpecifier, 这个是版本号, 比如`22.0`
+        // 具体取决于ae版本号, 可以通过注册表查看 HKEY_LOCAL_MACHINE\SOFTWARE\Adobe\After Effects\version
+
+        const hostSpecifier = config.hostSpecifier || "";
+
+        if (hostSpecifier) {
+            for (let i = 0; i < aePaths.length; i++) {
+                const element = aePaths[i];
+                if (element.label === hostSpecifier) {
+                    aePath = element.description;
+                    break;
+                }
+            }
         } else {
-            return null;
+            aePath = undefined;
+        }
+
+        // 如果没有配置, 那么使用vscode选择器
+        if (!aePath) {
+            const selection = await vscode.window.showQuickPick(aePaths, {
+                placeHolder: "请选择一个选项",
+                ignoreFocusOut: true,
+            });
+            if (selection) {
+                aePath = selection.description;
+            } else {
+                return null;
+            }
         }
     } else {
         aePath = aePaths.description;

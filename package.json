@@ -2,7 +2,7 @@
     "name": "ae-tsx-runner",
     "displayName": "Adobe AE jsx && tsx Runner",
     "description": "Run Adobe After Effects jsx or tsx Script without ExtendScript Toolkit.",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "publisher": "yuelili",
     "repository": {
         "type": "git",
@@ -60,6 +60,16 @@
                     "group": "navigation"
                 }
             ]
+        },
+        "configuration": {
+            "title": "Tsx Runner",
+            "properties": {
+                "ae-tsx-runner.hostSpecifier": {
+                    "type": "string",
+                    "default": false,
+                    "description": "The specifier of the host application to debug"
+                }
+            }
         }
     },
     "scripts": {

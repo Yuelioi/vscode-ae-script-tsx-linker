@@ -9,7 +9,7 @@
 
 ## Features
 
-- Run .jsx, .jsxbin, and .tsx script files.
+- Run .jsx, .jsxbin, or .tsx script files.
 - Multiple version detection: If only one instance of After Effects is running, the script will run directly. If multiple instances are running, a prompt will appear asking you to choose which version to test.
 
 ## Usage
@@ -41,6 +41,19 @@ please clone this for your first project ↓
 2. Look for `tsconfig.json` to get the outDir option.
 3. Look for `rollup.config.js` file. If found, create a `tsx-link.json`file, write input and output, and then compile using `rollup -c` (instead of tsc).
 4. Run the final script.
+
+## Multiple versions
+
+if you have multiple versions ae running, you can add config to `.vscode/settings.json`
+
+```json
+{
+    // ...
+    "ae-tsx-runner": {
+        "hostSpecifier": "22.0" // only run with ae 22.0
+    }
+}
+```
 
 ## tsconfig.json
 
@@ -145,6 +158,7 @@ tsx-link.json(auto generate)
 
 ## CHANGELOG
 
+- 0.6.1 - 2024-01-30: add config to settings.json
 - 0.6.0 - 2023-04-11: Checking software version currently running.
 - 0.5.0 - 2023-03-15: .Jsxbin Supported
 - 0.4.0 - 2023-03-10: Rollup Supported

@@ -22,6 +22,10 @@ F5 / 运行与调试 -> Run Extension
 
 `npm i vsce -g`
 
-`vsce  package`
+`vsce  package2`
 
 `vsce  publish`
+
+## 其他
+
+上传不上去, 可以打包, 然后再网站上传 `https://marketplace.visualstudio.com/manage/publishers/yuelili`
