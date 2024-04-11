@@ -2,7 +2,7 @@
     "name": "ae-tsx-runner",
     "displayName": "Adobe AE jsx && tsx Runner",
     "description": "Run Adobe After Effects jsx or tsx Script without ExtendScript Toolkit.",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "publisher": "yuelili",
     "repository": {
         "type": "git",

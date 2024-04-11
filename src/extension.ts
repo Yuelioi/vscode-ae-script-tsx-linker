@@ -166,7 +166,7 @@ function activate(context: { subscriptions: vscode.Disposable[] }) {
                 }
                 if (fs.existsSync(inputFilePath)) {
                     console.log(`"${aePath}" -r ${inputFilePath}`);
-                    child_process.exec(`"${aePath}" -r ${inputFilePath}`, (err) => {
+                    child_process.exec(`"${aePath}" -r "${inputFilePath}"`, (err) => {
                         console.log(err);
                     });
                 } else {
