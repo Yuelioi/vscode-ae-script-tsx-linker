@@ -1,114 +1,99 @@
 {
-    "name": "ae-tsx-runner",
-    "displayName": "Adobe AE jsx && tsx Runner",
-    "description": "Run Adobe After Effects jsx or tsx Script without ExtendScript Toolkit.",
-    "version": "0.6.2",
-    "publisher": "yuelili",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Yuelioi/vscode-ae-script-tsx-linker.git"
-    },
-    "engines": {
-        "vscode": "^1.75.1"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "onCommand:runrun.JSXScript"
-    ],
-    "keywords": [
-        "ae",
-        "after effects",
-        "extendscript",
-        "jsx",
-        "tsx",
-        "runner"
-    ],
-    "icon": "img/icon.png",
-    "main": "./dist/extension.js",
-    "contributes": {
-        "commands": [
-            {
-                "command": "runrun.JSXScript",
-                "title": "运行 AE 脚本",
-                "icon": {
-                    "light": "./img/light.svg",
-                    "dark": "./img/dark.svg"
-                }
-            }
-        ],
-        "menus": {
-            "editor/title": [
-                {
-                    "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
-                    "command": "runrun.JSXScript",
-                    "group": "navigation"
-                }
-            ],
-            "editor/context": [
-                {
-                    "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
-                    "command": "runrun.JSXScript",
-                    "group": "navigation"
-                }
-            ],
-            "editor/title/context": [
-                {
-                    "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
-                    "command": "runrun.JSXScript",
-                    "group": "navigation"
-                }
-            ]
-        },
-        "configuration": {
-            "title": "Tsx Runner",
-            "properties": {
-                "ae-tsx-runner.hostSpecifier": {
-                    "type": "string",
-                    "default": false,
-                    "description": "The specifier of the host application to debug"
-                }
-            }
+  "name": "ae-tsx-runner",
+  "displayName": "Adobe AE jsx && tsx Runner",
+  "description": "Run Adobe After Effects jsx or tsx Script without ExtendScript Toolkit.",
+  "version": "0.7.0",
+  "publisher": "yuelili",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yuelioi/vscode-ae-script-tsx-linker.git"
+  },
+  "engines": {
+    "vscode": "^1.75.1"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "keywords": [
+    "ae",
+    "after effects",
+    "extendscript",
+    "jsx",
+    "tsx",
+    "runner"
+  ],
+  "icon": "img/icon.png",
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "ae-tsx-runner.run",
+        "title": "运行 AE 脚本",
+        "icon": {
+          "light": "./img/light.svg",
+          "dark": "./img/dark.svg"
         }
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
+          "command": "ae-tsx-runner.run",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
+          "command": "ae-tsx-runner.run",
+          "group": "navigation"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
+          "command": "ae-tsx-runner.run",
+          "group": "navigation"
+        }
+      ]
     },
-    "scripts": {
-        "vscode:prepublish": "npm run package",
-        "compile": "webpack",
-        "watch": "webpack --watch",
-        "package": "webpack --mode production --devtool hidden-source-map",
-        "package2": "vsce package",
-        "publish": "vsce publish",
-        "compile-tests": "tsc -p . --outDir out",
-        "watch-tests": "tsc -p . -w --outDir out",
-        "pretest": "npm run compile-tests && npm run compile && npm run lint",
-        "lint": "eslint src --ext ts",
-        "test": "node ./out/test/runTest.js"
-    },
-    "devDependencies": {
-        "@types/vscode": "^1.75.0",
-        "@types/glob": "^8.1.0",
-        "@types/mocha": "^10.0.1",
-        "@types/node": "16.x",
-        "@typescript-eslint/eslint-plugin": "^5.53.0",
-        "@typescript-eslint/parser": "^5.53.0",
-        "eslint": "^8.34.0",
-        "@vscode/test-electron": "^2.1.5",
-        "del": "^7.0.0",
-        "glob": "^8.1.0",
-        "mocha": "^10.2.0",
-        "nodemon": "^2.0.19",
-        "run-sequence": "^2.2.1",
-        "ts-loader": "^9.3.1",
-        "typescript": "^4.9.5",
-        "vscode-nls-dev": "^4.0.1",
-        "webpack": "^5.75.0",
-        "webpack-cli": "^5.0.1"
-    },
-    "dependencies": {
-        "fs-extra": "^10.1.0",
-        "vscode-nls": "^5.2.0"
-    },
-    "license": "MIT",
-    "homepage": "https://github.com/Yuelioi/vscode-ae-script-tsx-linker"
+    "configuration": {
+      "title": "Tsx Runner",
+      "properties": {
+        "ae-tsx-runner.hostSpecifier": {
+          "type": "string",
+          "default": false,
+          "description": "The specifier of the host application to debug"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:build": "vsce package",
+    "vscode:prepublish": "pnpm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "pnpm run compile && pnpm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.93.0",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.16.0",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "fs-extra": "^10.1.0",
+    "winreg": "^1.2.5"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/Yuelioi/vscode-ae-script-tsx-linker"
 }
