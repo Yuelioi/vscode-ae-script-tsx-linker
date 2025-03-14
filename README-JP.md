@@ -37,7 +37,6 @@ After Effects 開発者のためのVS Code拡張機能 - TypeScriptワークフ�
    * 右クリックメニューから `AEスクリプトを実行`を選択
    * ショートカット**`<kbd>`**F5**`</kbd>`**を押下
 
-![バージョン選択](https://./preview/aes.png)
 *▲ マルチバージョンAE検出インターフェース*
 
 ---

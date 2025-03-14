@@ -2,7 +2,7 @@
   "name": "ae-tsx-runner",
   "displayName": "Adobe AE jsx && tsx Runner",
   "description": "Run Adobe After Effects jsx or tsx Script without ExtendScript Toolkit.",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "publisher": "yuelili",
   "repository": {
     "type": "git",
@@ -94,7 +94,6 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run package",
     "compile": "webpack",
     "watch": "webpack --watch",
     "package": "webpack --mode production --devtool hidden-source-map",

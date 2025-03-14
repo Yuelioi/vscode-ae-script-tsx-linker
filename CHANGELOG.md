@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [0.7.0] - 2025-03-14
+
+- mac supported
+
 ## [0.6.0] - 2023-04-11
 
 - Checking software version currently running.
