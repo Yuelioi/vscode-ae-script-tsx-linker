@@ -9,6 +9,8 @@
 
 *▲ 在 VS Code 中直接运行 AE 脚本*
 
+[中文说明](README-ZH.md) | [English](README.md) | [Japanese](README-JP.md)
+
 ---
 
 ## ✨ 核心特性

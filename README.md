@@ -1,4 +1,3 @@
-
 # AE Script Runner for VS Code 🚀
 
 [![VS Code Marketplace](https://img.shields.io/badge/VS%2520Code-Marketplace-blue)](https://marketplace.visualstudio.com/items?itemName=yourname.ae-script-runner)
@@ -9,6 +8,8 @@
 A professional-grade VS Code extension for After Effects developers, offering seamless TypeScript workflow integration and multi-version AE script execution capabilities.
 
 *▲ Direct script execution from VS Code interface*
+
+[中文说明](README-ZH.md) | [English](README.md) | [Japanese](README-JP.md)
 
 ---
 
@@ -34,9 +35,9 @@ A professional-grade VS Code extension for After Effects developers, offering se
 2. **Execute Script**
    * Click the **▶ Run Script** button in editor toolbar
    * Right-click in editor and select `Run AE Script`
-   * Use keyboard shortcut **`<kbd>`**F5**`</kbd>`**
+   * Use keyboard shortcut **`<kbd>`**F5** `</kbd>`**
 
-![Version Selection](https://./preview/aes.png)
+![Version Selection](./preview/aes.png)
 *▲ Multi-version AE detection interface*
 
 ---
@@ -59,8 +60,6 @@ npm install -D \
   types-for-adobe \
   @babel/core
 ```
-
----
 
 ## ⚙ Configuration
 

@@ -1,4 +1,3 @@
-
 # AEスクリプト実行ツール for VS Code 🚀
 
 [![VS Code Marketplace](https://img.shields.io/badge/VS%2520Code-Marketplace-blue)](https://marketplace.visualstudio.com/items?itemName=yourname.ae-script-runner)
@@ -8,8 +7,9 @@
 
 After Effects 開発者のためのVS Code拡張機能 - TypeScriptワークフローとマルチバージョンAE対応スクリプト実行環境
 
-![デモ画像](https://./preview/pic.png)
 *▲ VS Codeからの直接スクリプト実行*
+
+[中文说明](README-ZH.md) | [English](README.md) | [Japanese](README-JP.md)
 
 ---
 
@@ -35,7 +35,7 @@ After Effects 開発者のためのVS Code拡張機能 - TypeScriptワークフ�
 2. **スクリプトを実行**
    * エディタ上部の **▶ スクリプト実行** ボタンをクリック
    * 右クリックメニューから `AEスクリプトを実行`を選択
-   * ショートカット**`<kbd>`**F5**`</kbd>`**を押下
+   * ショートカット**`<kbd>`**F5** `</kbd>`**を押下
 
 *▲ マルチバージョンAE検出インターフェース*
 
@@ -127,10 +127,6 @@ export default {
     "hostSpecifier": "22.0(win)/Adobe After Effects 2025(mac)" // special id for windows and app name for macOS
   },
 ```
-
----
-
----
 
 ## 📜 バージョン履歴
 
