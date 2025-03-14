@@ -1,184 +1,188 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 import * as vscode from "vscode";
-import * as child_process from "child_process";
-import * as fs from "fs";
+import { exec } from "child_process";
+import { existsSync, readFileSync } from "fs";
 import * as path from "path";
-const win32 = process.platform === "win32";
+import { promisify } from "util";
+import { AppVersionInfo, TsConfig, WorkspaceSettings } from "./types";
 
-function showWarningMessage(message: string) {
-    vscode.window.showWarningMessage(message);
-}
-function getAePath() {
-    return new Promise((resolve, reject) => {
-        if (win32) {
-            const psScript = `
-                $AfterProcess = Get-WmiObject -Class Win32_Process -Filter 'Name="AfterFX.exe"' | Select-Object -ExpandProperty Path
+import JSON5 from "json5";
 
-                $ae = Get-ChildItem 'HKLM:\\SOFTWARE\\Adobe\\After Effects' |
-                Select-Object -ExpandProperty Name |
-                ForEach-Object {
-                    $name = $_ -replace 'HKEY_LOCAL_MACHINE\\\\SOFTWARE\\\\Adobe\\\\After Effects\\\\'
-                    $InstallPath = (Get-ItemPropertyValue ('HKLM:\\\\SOFTWARE\\\\Adobe\\\\After Effects\\\\' + $name) -Name "InstallPath") + 'AfterFX.exe'
-                    if ($AfterProcess -contains $InstallPath) {
-                        @{label = $name; description = $InstallPath }
-                    }
-                }
+const execAsync = promisify(exec);
 
-                Write-Output ($ae | ConvertTo-Json -Compress)
-                `;
+let getApps: () => AppVersionInfo[];
+let executeJsx: (aePath: string, scriptPath: string) => any;
 
-            const ps = child_process.spawn("powershell.exe", ["-command", "-"], {
-                stdio: ["pipe", "pipe", "pipe"],
-            });
-
-            let output = "";
-            ps.stdout.on("data", (data) => {
-                output += data.toString();
-            });
-
-            ps.stdin.write(psScript);
-            ps.stdin.write("\n"); // 添加一个换行符表示 PowerShell 脚本已经结束
-            ps.stdin.end();
-
-            ps.on("close", (code) => {
-                if (code === 0) {
-                    const result = JSON.parse(output);
-                    resolve(result);
-                } else {
-                    console.error(`PowerShell 进程结束时出错，退出码：${code}`);
-                }
-            });
-        } else {
-            reject(`暂不支持该系统`);
-        }
-    });
+if (process.platform === "win32") {
+  import("./win").then((module) => {
+    getApps = module.getApps;
+    executeJsx = module.executeJsx;
+  });
+} else if (process.platform === "darwin") {
+  import("./mac").then((module) => {
+    getApps = module.getApps;
+    executeJsx = module.executeJsx;
+  });
+} else {
+  throw new Error("不支持的平台");
 }
 
-async function selectAePath(aePaths: any) {
-    let aePath;
-    if (Array.isArray(aePaths)) {
-        const config = vscode.workspace.getConfiguration("ae-tsx-runner");
+// 默认配置
+const DEFAULT_OUT_DIR = "dist";
+const EXEC_TIMEOUT = 30000; // 30秒超时
 
-        // 查找.vscode/settings 下有没有 tsxRunner.hostSpecifier, 这个是版本号, 比如`22.0`
-        // 具体取决于ae版本号, 可以通过注册表查看 HKEY_LOCAL_MACHINE\SOFTWARE\Adobe\After Effects\version
+// 工具函数
+function checkWorkspaceFolder(): string {
+  const folder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  if (!folder) {
+    throw new Error("请先打开工作目录");
+  }
+  return folder;
+}
 
-        const hostSpecifier = config.hostSpecifier || "";
+async function selectAeVersion(versions: AppVersionInfo[]): Promise<string> {
+  const config = vscode.workspace.getConfiguration("ae-tsx-runner");
+  const hostSpecifier = config.get<string>("hostSpecifier");
 
-        if (hostSpecifier) {
-            for (let i = 0; i < aePaths.length; i++) {
-                const element = aePaths[i];
-                if (element.label === hostSpecifier) {
-                    aePath = element.description;
-                    break;
-                }
-            }
-        } else {
-            aePath = undefined;
-        }
-
-        // 如果没有配置, 那么使用vscode选择器
-        if (!aePath) {
-            const selection = await vscode.window.showQuickPick(aePaths, {
-                placeHolder: "请选择一个选项",
-                ignoreFocusOut: true,
-            });
-            if (selection) {
-                aePath = selection.description;
-            } else {
-                return null;
-            }
-        }
-    } else {
-        aePath = aePaths.description;
+  // 优先使用配置版本
+  if (hostSpecifier) {
+    const matched = versions.find((v) => v.label === hostSpecifier);
+    if (matched) {
+      return matched.description;
     }
-    return aePath;
+    vscode.window.showWarningMessage(`配置版本 ${hostSpecifier} 未找到`);
+  }
+
+  // 显示版本选择器
+  const selection = await vscode.window.showQuickPick(
+    versions.map((v) => ({
+      label: `AE ${v.label}`,
+      description: v.description,
+      detail: `安装路径: ${v.description}`,
+    })),
+    {
+      placeHolder: "选择正在运行的 After Effects 版本",
+      ignoreFocusOut: true,
+    }
+  );
+
+  if (!selection) {
+    throw new Error("未选择 AE 版本");
+  }
+  return selection.description;
 }
 
-function activate(context: { subscriptions: vscode.Disposable[] }) {
-    const disposable = vscode.commands.registerCommand("runrun.JSXScript", () => {
-        getAePath()
-            .then(async (aePaths: any) => {
-                let aePath = await selectAePath(aePaths);
-                if (!aePath) {
-                    return;
-                }
-                console.log(aePath);
-                const activeEditor = vscode.window.activeTextEditor;
-                if (!activeEditor) {
-                    vscode.window.showErrorMessage("请打开至少一个文档");
-                    return;
-                }
-                let inputFilePath = activeEditor.document.uri.fsPath;
-                const inputFileName = activeEditor.document.fileName;
-                const workspaceFolder = (vscode.workspace.workspaceFolders as any)[0].uri.fsPath;
+function getTsconfig() {
+  const workspaceFolder = checkWorkspaceFolder();
+  const tsConfigPath = path.join(workspaceFolder, "tsconfig.json");
+  if (!existsSync(tsConfigPath)) {
+    throw new Error("未找到 tsconfig 文件");
+  }
 
-                // 如果文件名以tsx结尾, 就运行tsc脚本
-                if (inputFileName.endsWith(".tsx")) {
-                    let distFolder = "dist";
-                    let tsConfigFile: string | undefined;
-
-                    // 判断使用哪个配置文件
-                    if (fs.existsSync(path.join(workspaceFolder!, "tsconfig-ae.json"))) {
-                        tsConfigFile = "tsconfig-ae.json";
-                    } else if (fs.existsSync(path.join(workspaceFolder!, "tsconfig.json"))) {
-                        tsConfigFile = "tsconfig.json";
-                    }
-
-                    // 如果有配置文件, 就获取导出文件夹
-                    if (tsConfigFile) {
-                        try {
-                            const tsConfig = require(path.join(workspaceFolder, tsConfigFile));
-                            distFolder = tsConfig.compilerOptions.outDir || distFolder;
-                        } catch {
-                            // do nothing
-                        }
-                    }
-                    // 获取源文件纯名称以及输出文件路径
-                    const outFileBaseName = path.basename(inputFileName, ".tsx");
-                    const outFilePath = `${distFolder}/${outFileBaseName}.jsx`;
-
-                    try {
-                        // 查看有没有使用rollup
-                        const rollupConfigPath = path.join(workspaceFolder, "rollup.config.js");
-                        if (fs.existsSync(rollupConfigPath)) {
-                            const content = {
-                                input: inputFilePath,
-                                output: outFilePath,
-                            };
-                            const rollupPath = path.join(workspaceFolder, "node_modules", ".bin", "rollup");
-                            fs.writeFileSync(path.join(workspaceFolder, "tsx-link.json"), JSON.stringify(content));
-
-                            child_process.execSync(`"${rollupPath}" -c "${rollupConfigPath}"`, {
-                                cwd: workspaceFolder,
-                            });
-
-                            // TODO: 输出调试信息
-                        } else {
-                            child_process.execSync(`tsc --project ${tsConfigFile}`, {
-                                cwd: workspaceFolder,
-                            });
-                        }
-                    } catch (err) {
-                        console.log(err);
-                    }
-                    inputFilePath = path.join(workspaceFolder, outFilePath);
-                }
-                if (fs.existsSync(inputFilePath)) {
-                    console.log(`"${aePath}" -r ${inputFilePath}`);
-                    child_process.exec(`"${aePath}" -r ${inputFilePath}`, (err) => {
-                        console.log(err);
-                    });
-                } else {
-                    showWarningMessage("请检查文件/配置文件/语法是否错误");
-                }
-            })
-            .catch((err) => {
-                showWarningMessage(err);
-            });
-    });
-    context.subscriptions.push(disposable);
+  const tsConfig: TsConfig = JSON5.parse(readFileSync(tsConfigPath, "utf-8"));
+  return { tsConfigPath, tsConfig };
 }
 
-exports.activate = activate;
-//# sourceMappingURL=extension.js.map
+async function compileTsx(inputPath: string): Promise<string> {
+  const workspaceFolder = checkWorkspaceFolder();
+
+  const { tsConfigPath, tsConfig } = getTsconfig();
+  let outDir = DEFAULT_OUT_DIR;
+  try {
+    outDir = tsConfig.compilerOptions?.outDir || DEFAULT_OUT_DIR;
+  } catch (error) {
+    console.warn("读取 tsconfig 失败，使用默认输出目录", error);
+  }
+
+  // 构建输出路径
+  const outFileBase = path.basename(inputPath, ".tsx");
+  const outputPath = path.join(workspaceFolder, outDir, `${outFileBase}.jsx`);
+
+  // 写入配置
+  await writeToConfig(inputPath, outputPath);
+
+  // 选择构建工具
+  const useRollup = existsSync(path.join(workspaceFolder, "rollup.config.js"));
+
+  try {
+    if (useRollup) {
+      const rollupBin = path.join(workspaceFolder, "node_modules", ".bin", "rollup");
+      await execAsync(`"${rollupBin}" -c`, {
+        cwd: workspaceFolder,
+        timeout: EXEC_TIMEOUT,
+      });
+    } else {
+      await execAsync(`tsc --project ${tsConfigPath}`, {
+        cwd: workspaceFolder,
+        timeout: EXEC_TIMEOUT,
+      });
+    }
+
+    if (!existsSync(outputPath)) {
+      throw new Error("输出文件未生成");
+    }
+    return outputPath;
+  } catch (error) {
+    const err = error as Error & { code?: number };
+    throw new Error(`构建失败: ${err.message} (code ${err.code || "未知"})`);
+  }
+}
+
+async function writeToConfig(input: string, output: string) {
+  const config = vscode.workspace.getConfiguration();
+  try {
+    // 读取现有配置
+    let configObj = config.get<WorkspaceSettings>("ae-tsx-runner", { input: "", output: "", hostSpecifier: "" });
+
+    // 更新配置对象
+    configObj.input = input;
+    configObj.output = output;
+    configObj.hostSpecifier = configObj.hostSpecifier || "";
+
+    // 存回 settings.json
+    await config.update("ae-tsx-runner", configObj, vscode.ConfigurationTarget.Workspace);
+  } catch (error) {
+    vscode.window.showErrorMessage("配置保存失败: " + error);
+  }
+}
+export function activate(context: vscode.ExtensionContext) {
+  const disposable = vscode.commands.registerCommand("runrun.JSXScript", async () => {
+    try {
+      // 1. 获取工作区信息
+      const editor = vscode.window.activeTextEditor;
+
+      if (!editor) {
+        return;
+      }
+
+      // 2. 获取 AE 路径
+      const versions = getApps();
+      if (versions.length === 0) {
+        throw new Error("未找到运行的 AE 实例");
+      }
+
+      // 3. 选择版本
+      const aePath = await selectAeVersion(versions);
+
+      const fileName = editor.document.fileName;
+
+      if (fileName.endsWith(".jsx")) {
+        // 4. 执行JSX脚本
+        executeJsx(aePath, fileName);
+        return;
+      }
+
+      if (fileName.endsWith(".tsx")) {
+        // 5. 编译TSX文件
+        const outputPath = await compileTsx(editor.document.fileName);
+        // 6. 执行JSX脚本
+        executeJsx(aePath, outputPath);
+      }
+    } catch (error) {
+      const err = error as Error;
+      vscode.window.showWarningMessage(err.message);
+      console.error(err.stack);
+    }
+  });
+
+  context.subscriptions.push(disposable);
+}
