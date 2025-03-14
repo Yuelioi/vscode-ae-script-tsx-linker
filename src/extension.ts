@@ -165,13 +165,13 @@ export function activate(context: vscode.ExtensionContext) {
 
       const fileName = editor.document.fileName;
 
-      if (fileName.endsWith(".jsx")) {
+      if (fileName.endsWith(".jsx") || fileName.endsWith(".jsxbin")) {
         // 4. 执行JSX脚本
         executeJsx(aePath, fileName);
         return;
       }
 
-      if (fileName.endsWith(".tsx")) {
+      if (fileName.endsWith(".tsx") || fileName.endsWith(".ts")) {
         // 5. 编译TSX文件
         const outputPath = await compileTsx(editor.document.fileName);
         // 6. 执行JSX脚本
