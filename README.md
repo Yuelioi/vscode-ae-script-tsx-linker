@@ -44,6 +44,8 @@ A professional-grade VS Code extension for After Effects developers, offering se
 
 ## 🛠 Quick Start (typescript projects)
 
+You can start with [Adobe-Scripting-With-Typescript-Demo](https://github.com/Yuelioi/Adobe-Scripting-With-Typescript-Demo)
+
 ### Prerequisites
 
 * [Node.js](https://nodejs.org/) v16+

@@ -43,6 +43,8 @@ After Effects 開発者のためのVS Code拡張機能 - TypeScriptワークフ�
 
 ## 🛠 クイックスタート (typescript利用時)
 
+You can start with this project:  [Adobe-Scripting-With-Typescript-Demo](https://github.com/Yuelioi/Adobe-Scripting-With-Typescript-Demo)
+
 ### 前提条件
 
 * [Node.js](https://nodejs.org/) v16+
@@ -64,7 +66,7 @@ npm install -D \
 
 ## ⚙ 設定詳細
 
-### 推奨tsconfig.json（TypeScript利用時）
+### 推奨tsconfig.json
 
 ```json
 {
@@ -95,7 +97,7 @@ npm install -D \
 
 ---
 
-## 🔧 高度な設定（TypeScript利用時）
+## 🔧 高度な設定
 
 ### Rollup設定例
 

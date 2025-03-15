@@ -44,6 +44,8 @@
 
 ## 🛠 快速开始 (typescript 项目)
 
+你可以clone 这个初始项目  [Adobe-Scripting-With-Typescript-Demo](https://github.com/Yuelioi/Adobe-Scripting-With-Typescript-Demo)
+
 ### 前置要求
 
 * [Node.js](https://nodejs.org/) v16+
