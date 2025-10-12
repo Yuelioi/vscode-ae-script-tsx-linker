@@ -1,3 +1,14 @@
 {
-  "ae-tsx-runner.run": "Run Ae Script"
+  "command.runScript": "Run AE Script",
+  "configuration.title": "AE TSX Runner",
+  "configuration.hostSpecifier.description": "Specify the After Effects version to use (e.g., '2024'). Leave empty to show version picker.",
+  "configuration.buildTool.description": "Build tool for TypeScript compilation",
+  "configuration.buildTool.auto": "Auto-detect build tool based on project configuration",
+  "configuration.buildTool.tsc": "Use TypeScript Compiler (tsc)",
+  "configuration.buildTool.rollup": "Use Rollup bundler",
+  "configuration.buildTool.webpack": "Use Webpack bundler",
+  "configuration.buildTool.esbuild": "Use esbuild bundler",
+  "configuration.customBuildCommand.description": "Custom build command (overrides buildTool setting). Example: 'npm run build'",
+  "configuration.input.description": "Input file path (auto-populated)",
+  "configuration.output.description": "Output file path (auto-populated)"
 }

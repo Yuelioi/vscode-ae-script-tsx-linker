@@ -1,0 +1,23 @@
+{
+  "error.unsupportedPlatform": "不支持的平台",
+  "error.noWorkspace": "请先打开工作目录",
+  "warning.versionNotFound": "配置版本 {0} 未找到",
+  "detail.installPath": "安装路径: {0}",
+  "placeholder.selectVersion": "选择正在运行的 After Effects 版本",
+  "error.noVersionSelected": "未选择 AE 版本",
+  "error.noTsConfig": "未找到 tsconfig.json",
+  "error.invalidTsConfig": "解析 tsconfig.json 失败: {0}",
+  "error.buildFailed": "构建失败: {0} (代码 {1})",
+  "error.outputNotGenerated": "输出文件未生成",
+  "error.configSaveFailed": "配置保存失败: {0}",
+  "warning.noActiveEditor": "没有活动的编辑器",
+  "error.noAeInstance": "未找到运行的 AE 实例",
+  "success.executed": "脚本执行成功",
+  "success.compiledAndExecuted": "脚本编译并执行成功",
+  "warning.unsupportedFileType": "不支持的文件类型: {0}",
+  "error.noAeFound": "未找到 After Effects 安装",
+  "error.getAppsFailed": "获取 After Effects 应用失败: {0}",
+  "error.executionFailed": "执行脚本失败: {0}",
+  "error.noRunningAe": "未找到运行中的 After Effects 实例",
+  "progress.building": "正在使用 {0} 构建..."
+}

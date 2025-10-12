@@ -1,0 +1,23 @@
+{
+  "error.unsupportedPlatform": "Unsupported platform",
+  "error.noWorkspace": "Please open a workspace folder first",
+  "warning.versionNotFound": "Configured version {0} not found",
+  "detail.installPath": "Install path: {0}",
+  "placeholder.selectVersion": "Select running After Effects version",
+  "error.noVersionSelected": "No AE version selected",
+  "error.noTsConfig": "tsconfig.json not found",
+  "error.invalidTsConfig": "Failed to parse tsconfig.json: {0}",
+  "error.buildFailed": "Build failed: {0} (code {1})",
+  "error.outputNotGenerated": "Output file was not generated",
+  "error.configSaveFailed": "Failed to save configuration: {0}",
+  "warning.noActiveEditor": "No active editor",
+  "error.noAeInstance": "No running After Effects instance found",
+  "success.executed": "Script executed successfully",
+  "success.compiledAndExecuted": "Script compiled and executed successfully",
+  "warning.unsupportedFileType": "Unsupported file type: {0}",
+  "error.noAeFound": "No After Effects installation found",
+  "error.getAppsFailed": "Failed to get After Effects apps: {0}",
+  "error.executionFailed": "Failed to execute script: {0}",
+  "error.noRunningAe": "No running After Effects instance found",
+  "progress.building": "Building with {0}..."
+}

@@ -1,14 +1,18 @@
 import { execSync } from "child_process";
-
 import { AppVersionInfo } from "./types";
+import * as nls from "vscode-nls";
 
-// 同步获取 AE 应用列表
+const localize = nls.loadMessageBundle();
+
+/**
+ * 获取所有已安装的 After Effects 应用
+ */
 export function getApps(): AppVersionInfo[] {
   try {
     const command = `mdfind "kMDItemCFBundleIdentifier == 'com.adobe.AfterEffects'"`;
-    const stdout = execSync(command).toString();
+    const stdout = execSync(command, { encoding: "utf8" });
 
-    return stdout
+    const apps = stdout
       .split("\n")
       .filter((path) => path.trim() !== "")
       .map((fullPath) => {
@@ -18,19 +22,53 @@ export function getApps(): AppVersionInfo[] {
           description: fullPath.trim(),
         };
       });
+
+    if (apps.length === 0) {
+      throw new Error(
+        localize("error.noAeFound", "No After Effects installation found")
+      );
+    }
+
+    return apps;
   } catch (error) {
-    console.error(`❌ 获取 AE 应用失败: ${error}`);
-    return [];
+    console.error(`Failed to get AE apps: ${error}`);
+    throw new Error(
+      localize(
+        "error.getAppsFailed",
+        "Failed to get After Effects apps: {0}",
+        String(error)
+      )
+    );
   }
 }
 
-// 同步执行 AppleScript
-export function executeJsx(appPath: string, scriptPath: string) {
+/**
+ * 在 After Effects 中执行 JSX 脚本
+ */
+export async function executeJsx(
+  appPath: string,
+  scriptPath: string
+): Promise<void> {
   try {
-    const command = `osascript -e 'tell application "${appPath}" to DoScriptFile (POSIX file "${scriptPath}")'`;
-    const output = execSync(command).toString();
-    console.log(`✅ 执行成功: ${output}`);
+    // 转义路径中的特殊字符
+    const escapedAppPath = appPath.replace(/'/g, "'\\''");
+    const escapedScriptPath = scriptPath.replace(/'/g, "'\\''");
+
+    const command = `osascript -e 'tell application "${escapedAppPath}" to DoScriptFile (POSIX file "${escapedScriptPath}")'`;
+
+    const output = execSync(command, {
+      encoding: "utf8",
+      timeout: 30000,
+    });
+
+    console.log(`✅ Script executed successfully: ${output}`);
   } catch (error) {
-    console.error(`❌ 执行出错: ${error}`);
+    console.error(
+      localize(
+        "error.executionFailed",
+        "Failed to execute script: {0}",
+        String(error)
+      )
+    );
   }
 }

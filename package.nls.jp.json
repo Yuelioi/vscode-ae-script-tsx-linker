@@ -1,3 +1,14 @@
 {
-  "ae-tsx-runner.run": "Aeスクリプト実行"
+  "ae-tsx-runner.run": "Aeスクリプト実行",
+  "configuration.title": "AE TSX ランナー",
+  "configuration.hostSpecifier.description": "使用する After Effects のバージョンを指定（例：'2024'）。空欄の場合はバージョン選択画面を表示します。",
+  "configuration.buildTool.description": "TypeScript コンパイル用のビルドツール",
+  "configuration.buildTool.auto": "プロジェクト設定に基づいてビルドツールを自動検出",
+  "configuration.buildTool.tsc": "TypeScript コンパイラ (tsc) を使用",
+  "configuration.buildTool.rollup": "Rollup バンドラーを使用",
+  "configuration.buildTool.webpack": "Webpack バンドラーを使用",
+  "configuration.buildTool.esbuild": "esbuild バンドラーを使用",
+  "configuration.customBuildCommand.description": "カスタムビルドコマンド（buildTool 設定を上書き）。例: 'npm run build'",
+  "configuration.input.description": "入力ファイルのパス（自動入力）",
+  "configuration.output.description": "出力ファイルのパス（自動入力）"
 }

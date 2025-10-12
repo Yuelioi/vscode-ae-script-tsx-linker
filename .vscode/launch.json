@@ -11,12 +11,13 @@
       "request": "launch",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}",
-        // "--disable-extensions" // 调试时关闭其他拓展
+        "--disable-extensions", // 调试时关闭其他拓展
+        "--extension=Adobe.extendscript-debug" // 启用指定扩展
       ],
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js"
       ],
-      "preLaunchTask": "tasks: watch-tests"
+      "preLaunchTask": "watch:tsc"
     }
   ]
 }

@@ -4,47 +4,21 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "watch:esbuild",
       "type": "npm",
-      "script": "watch",
-      "problemMatcher": {
-        "owner": "webpack",
-        "pattern": [
-          {
-            "regexp": "^ERROR in (.*)\\((\\d+),(\\d+)\\): (.*)$",
-            "file": 1,
-            "line": 2,
-            "column": 3,
-            "message": 4,
-            "severity": "error"
-          },
-          {
-            "regexp": "^WARNING in (.*)\\((\\d+),(\\d+)\\): (.*)$",
-            "file": 1,
-            "line": 2,
-            "column": 3,
-            "message": 4,
-            "severity": "warning"
-          }
-        ],
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "Compiler starting...",
-          "endsPattern": "Compiler finished"
-        }
-      },
+      "script": "watch:esbuild",
+      "problemMatcher": [],
       "isBackground": true,
       "presentation": {
         "reveal": "never",
         "group": "watchers"
       },
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
+      "group": "build"
     },
     {
+      "label": "watch:tsc",
       "type": "npm",
-      "script": "watch-tests",
+      "script": "watch:tsc",
       "problemMatcher": "$tsc-watch",
       "isBackground": true,
       "presentation": {
@@ -54,10 +28,10 @@
       "group": "build"
     },
     {
-      "label": "tasks: watch-tests",
+      "label": "tasks: watch-all",
       "dependsOn": [
-        "npm: watch",
-        "npm: watch-tests"
+        "watch:esbuild",
+        "watch:tsc"
       ],
       "problemMatcher": []
     }

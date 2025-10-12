@@ -1,3 +1,14 @@
 {
-  "ae-tsx-runner.run": "运行 Ae 脚本"
+  "command.runScript": "运行 AE 脚本",
+  "configuration.title": "AE TSX 运行器",
+  "configuration.hostSpecifier.description": "指定要使用的 After Effects 版本(例如 '2024')。留空则显示版本选择器。",
+  "configuration.buildTool.description": "TypeScript 编译构建工具",
+  "configuration.buildTool.auto": "根据项目配置自动检测构建工具",
+  "configuration.buildTool.tsc": "使用 TypeScript 编译器(tsc)",
+  "configuration.buildTool.rollup": "使用 Rollup 打包工具",
+  "configuration.buildTool.webpack": "使用 Webpack 打包工具",
+  "configuration.buildTool.esbuild": "使用 esbuild 打包工具",
+  "configuration.customBuildCommand.description": "自定义构建命令(覆盖 buildTool 设置)。例如: 'npm run build'",
+  "configuration.input.description": "输入文件路径(自动填充)",
+  "configuration.output.description": "输出文件路径(自动填充)"
 }

@@ -2,7 +2,7 @@
   "name": "ae-tsx-runner",
   "displayName": "Adobe AE jsx && tsx Runner",
   "description": "Run Adobe After Effects jsx or tsx Script without ExtendScript Toolkit.",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "publisher": "yuelili",
   "repository": {
     "type": "git",
@@ -10,14 +10,12 @@
   },
   "homepage": "https://github.com/Yuelioi/vscode-ae-script-tsx-linker",
   "engines": {
-    "vscode": "^1.75.1"
+    "vscode": "^1.105.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:runrun.JSXScript"
-  ],
+  "activationEvents": [],
   "keywords": [
     "ae",
     "after effects",
@@ -32,7 +30,7 @@
     "commands": [
       {
         "command": "runrun.JSXScript",
-        "title": "运行 AE 脚本",
+        "title": "%command.runScript%",
         "icon": {
           "light": "./img/light.svg",
           "dark": "./img/dark.svg"
@@ -42,88 +40,96 @@
     "menus": {
       "editor/title": [
         {
-          "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
+          "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .ts || resourceExtname == .jsxbin",
           "command": "runrun.JSXScript",
           "group": "navigation"
         }
       ],
       "editor/context": [
         {
-          "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
-          "command": "runrun.JSXScript",
-          "group": "navigation"
-        }
-      ],
-      "editor/title/context": [
-        {
-          "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .jsxbin",
+          "when": "resourceExtname == .jsx || resourceExtname == .tsx || resourceExtname == .ts || resourceExtname == .jsxbin",
           "command": "runrun.JSXScript",
           "group": "navigation"
         }
       ]
     },
     "configuration": {
-      "title": "Tsx Runner",
+      "title": "%configuration.title%",
       "properties": {
-        "ae-tsx-runner": {
-          "type": "object",
-          "default": {
-            "input": "",
-            "output": ""
-          },
-          "description": "AE TSX Runner 配置",
-          "properties": {
-            "input": {
-              "type": "string",
-              "default": "",
-              "description": "输入文件路径"
-            },
-            "output": {
-              "type": "string",
-              "default": "",
-              "description": "输出文件路径"
-            },
-            "hostSpecifier": {
-              "type": "string",
-              "default": "",
-              "description": "主机标识符/主机名称"
-            }
-          }
+        "ae-tsx-runner.hostSpecifier": {
+          "type": "string",
+          "default": "",
+          "description": "%configuration.hostSpecifier.description%",
+          "order": 1
+        },
+        "ae-tsx-runner.buildTool": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "tsc",
+            "rollup",
+            "webpack",
+            "esbuild"
+          ],
+          "default": "auto",
+          "description": "%configuration.buildTool.description%",
+          "enumDescriptions": [
+            "%configuration.buildTool.auto%",
+            "%configuration.buildTool.tsc%",
+            "%configuration.buildTool.rollup%",
+            "%configuration.buildTool.webpack%",
+            "%configuration.buildTool.esbuild%"
+          ],
+          "order": 2
+        },
+        "ae-tsx-runner.customBuildCommand": {
+          "type": "string",
+          "default": "",
+          "description": "%configuration.customBuildCommand.description%",
+          "order": 3
+        },
+        "ae-tsx-runner.input": {
+          "type": "string",
+          "default": "",
+          "description": "%configuration.input.description%",
+          "order": 4
+        },
+        "ae-tsx-runner.output": {
+          "type": "string",
+          "default": "",
+          "description": "%configuration.output.description%",
+          "order": 5
         }
       }
     }
   },
   "scripts": {
-    "compile": "webpack",
-    "watch": "webpack --watch",
-    "package": "webpack --mode production --devtool hidden-source-map",
-    "package2": "vsce package",
-    "publish": "vsce publish",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "package": "pnpm vsce package --no-dependencies",
+    "publish": "pnpm vsce publish --no-dependencies",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "16.x",
-    "@types/vscode": "^1.75.0",
-    "@typescript-eslint/eslint-plugin": "^5.53.0",
-    "@typescript-eslint/parser": "^5.53.0",
-    "@vscode/test-electron": "^2.1.5",
-    "del": "^7.0.0",
-    "eslint": "^8.34.0",
-    "glob": "^8.1.0",
-    "mocha": "^10.2.0",
-    "nodemon": "^2.0.19",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "24.7.2",
+    "@types/vscode": "1.105.0",
+    "@typescript-eslint/eslint-plugin": "8.46.0",
+    "@typescript-eslint/parser": "8.46.0",
+    "@vscode/test-electron": "2.5.2",
+    "del": "8.0.1",
+    "eslint": "9.37.0",
+    "glob": "11.0.3",
+    "mocha": "11.7.4",
+    "nodemon": "3.1.10",
     "run-sequence": "^2.2.1",
-    "ts-loader": "^9.3.1",
-    "typescript": "^4.9.5",
-    "vscode-nls-dev": "^4.0.1",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
+    "ts-loader": "^9.5.4",
+    "typescript": "5.9.3",
+    "vscode-nls-dev": "^4.0.4",
+    "esbuild": "^0.25.10"
   },
   "dependencies": {
     "fs-extra": "^10.1.0",

@@ -11,63 +11,43 @@
 
 [中文说明](README-ZH.md) | [English](README.md) | [Japanese](README-JP.md)
 
+## ✨ 功能特性
+
+* 🎯 **一键运行** - 直接在 VS Code 中执行 AE 脚本
+* 📦 **支持 TypeScript** - 完整支持 `.tsx` / `.ts` 编译
+* 🔄 **多种构建工具** - 自动检测 Rollup、Webpack、esbuild 或 tsc
+* 🌍 **多语言界面** - 支持英文与中文
+* 🖥️ **跨平台** - 兼容 Windows 与 macOS
+* ⚡ **智能检测** - 自动识别正在运行的 AE 实例
+
+## 🚀 快速开始
+
+### 1️⃣ 安装
+
+在 VS Code 插件市场中搜索并安装 **Adobe After Effects Script Runner**
+
 ---
 
-## ✨ 核心特性
+### 2️⃣ 使用方法
 
-* **全格式支持**
-  `.jsx` / `.jsxbin` / `.tsx` 脚本一键运行
-* **智能版本检测**
-  自动识别已安装的 AE 版本，多实例时提供选择菜单
-* **跨平台支持**
-  完美兼容 Windows 和 macOS 系统
-* **TypeScript 优先**
-  集成 Rollup 构建流程，支持现代 ES 特性
-* **实时编译**
-  文件保存后自动触发构建 (通过rollup  `--watch` 模式)
-
----
-
-## 🚀 使用指南
-
-1. **打开 AE 脚本文件**
-   在 VS Code 中打开任意 `.jsx` 或 `.tsx` 文件
-2. **运行脚本**
-
-   * 点击编辑器右上角的 **▶ Run Script** 按钮
-   * 或右键 运行ae脚本 命令`**
+1. 打开任意 `.jsx`、`.tsx`、`.ts` 或 `.jsxbin` 文件
+2. 确保 Adobe After Effects 已经运行
+3. 点击编辑器工具栏中的 ▶ **运行脚本** 按钮
 
 ![Version Selector](./preview/aes.png)
-*▲ 多版本 AE 检测界面*
+*▲ 支持多版本 AE 自动检测*
 
 ---
 
-## 🛠 快速开始 (typescript 项目)
-
-你可以clone 这个初始项目  [Adobe-Scripting-With-Typescript-Demo](https://github.com/Yuelioi/Adobe-Scripting-With-Typescript-Demo)
-
-### 前置要求
-
-* [Node.js](https://nodejs.org/) v16+
-* [TypeScript](https://www.typescriptlang.org/) 4.9+
-* [Rollup](https://rollupjs.org/) 3.x
-
-### 安装扩展依赖
+### 3️⃣ TypeScript 项目配置安装扩展依赖
 
 ```bash
-npm install -D \
-  rollup \
-  json5 \
-  @rollup/plugin-typescript \
-  types-for-adobe \
-  @babel/core
+npm install -D typescript rollup @rollup/plugin-typescript
 ```
 
 ---
 
-## ⚙ 配置说明
-
-### 推荐 tsconfig.json (仅typescript需要)
+创建 `tsconfig.json`：
 
 ```json
 {
@@ -81,82 +61,192 @@ npm install -D \
 }
 ```
 
-### 典型项目结构
+## ⚙️ 插件配置
 
-```txt
-.
-├── .vscode/
-│   └── settings.json    # 存储脚本路径配置
-├── dist/                # 编译输出目录
-├── src/
-│   ├── lib/             # 公共库
-│   ├── utils/           # 工具函数
-│   └── main.tsx         # 入口文件
-├── rollup.config.js     # 构建配置
-└── tsconfig.json        # TS 类型配置
+打开 VS Code 设置或 `.vscode/settings.json`：
+
+```json
+{
+  "ae-tsx-runner.hostSpecifier": "aftereffects-25.0",
+  "ae-tsx-runner.buildTool": "auto"
+}
+
 ```
 
----
+更多关于 `hostSpecifier` 的信息请参考：
 
-## 🔧 高级配置
+👉 [Adobe.extendscript-debug hostAppSpecifier](https://marketplace.visualstudio.com/items?itemName=Adobe.extendscript-debug)
 
-### Rollup 构建示例
+### 配置选项说明
+
+| 设置项                 | 说明                                                                  | 默认值                       |
+| ---------------------- | --------------------------------------------------------------------- | ---------------------------- |
+| `hostSpecifier`      | 要使用的 AE 版本（如 `"aftereffects-25.0"`）                        | `""`（若为空则弹出选择器） |
+| `buildTool`          | 构建工具类型：`auto`、`tsc`、`rollup`、`webpack`、`esbuild` | `auto`                     |
+| `customBuildCommand` | 自定义构建命令（例如 `npm run build`）                              | `""`                       |
+
+### Rollup 配置示例
+
+可以从 `.vscode/settings.json` 中读取输入/输出路径：
 
 ```js
 // rollup.config.js
-import typescript from '@rollup/plugin-typescript';
-import jsxbin2 from 'rollup-plugin-jsxbin2';
+import { readFileSync } from 'fs';
+import JSON5 from 'json5';
+
+const settings = JSON5.parse(readFileSync('.vscode/settings.json', 'utf8'));
+const input = settings['ae-tsx-runner.input'] || 'src/main.tsx';
+const output = settings['ae-tsx-runner.output'] || 'dist/main.jsx';
 
 export default {
-  input: 'src/main.tsx',
-  output: {
-    file: 'dist/script.jsx',
-    format: 'cjs'
-  },
-  plugins: [
-    typescript(),
-    jsxbin2({ 
-      output: 'dist/script.jsxbin' 
-    })
-  ]
+  input,
+  output: { file: output, format: 'cjs' },
+  // ... 其他配置
 };
 ```
 
+## 📁 项目结构
+
+your-project/
+├── .vscode/
+│   └── settings.json       # 自动生成的配置文件
+├── src/
+│   └── main.tsx            # 你的脚本源码
+├── dist/
+│   └── main.jsx            # 编译输出
+├── tsconfig.json
+├── rollup.config.js        # 可选构建配置
+└── package.json
+
+## 🔧 构建工具选项
+
+自动检测（推荐）
+
+```json
+{
+  "ae-tsx-runner.buildTool": "auto" // 默认
+}
+```
+
+手动选择
+
+```json
+{
+  "ae-tsx-runner.buildTool": "rollup" // 或 "webpack"、"esbuild"、"tsc"
+}
+```
+
+自定义命令
+
+```json
+{
+  "ae-tsx-runner.customBuildCommand": "npm run build:ae"
+}
+```
+
+## 📋 示例
+
+### 示例 1：简单 JSX 脚本
+
+```js
+// script.jsx
+alert("Hello from AE!");
+
+```
+
+直接点击 ▶ 运行 即可，无需额外配置！
+
+### 示例 2：TypeScript 项目
+
+```js
+
+// src/main.tsx
+interface CompSettings {
+  name: string;
+  duration: number;
+}
+
+const settings: CompSettings = {
+  name: "My Comp",
+  duration: 5
+};
+
+const comp = app.project.items.addComp(
+  settings.name,
+  1920,
+  1080,
+  1,
+  settings.duration,
+  30
+);
+
+alert(`已创建合成: ${comp.name}`);
+```
+
+插件会自动编译并运行脚本！
+
+## 🐛 常见问题（FAQ）
+
+### ❌ “No running After Effects instance found”
+
+ **解决方案** ：运行脚本前请确保 AE 已启动。
+
 ---
 
-### 多版本指定配置
+### ⚠️ “Build failed”
 
-.vscode/settings.json
+ **解决方案** ：
 
-  "ae-tsx-runner": {
-    "input": "....tsx",
-    "output": "....jsx",
-    "hostSpecifier": "22.0(win)/Adobe After Effects 2025(mac)" // 多版本时, 可以设置版本号(win)/应用名称(mac)来运行指定版本
-  },
+1. 检查 `tsconfig.json` 配置
+2. 确认已安装构建工具（`npm install`）
+3. 打开 VS Code “输出” 面板查看详细错误信息
 
 ---
 
-## 📜 版本历史
+### ⚠️ “Output file not generated”
 
-| 版本  | 日期       | 更新内容               |
-| ----- | ---------- | ---------------------- |
-| 0.7.0 | 2025-03-14 | 新增 macOS 系统支持    |
-| 0.6.0 | 2023-04-11 | 实现多版本 AE 检测功能 |
-| 0.5.0 | 2023-03-15 | 增加 .jsxbin 格式支持  |
+ **解决方案** ：
 
-[查看完整更新日志](https://changelog.md/)
+1. 检查 `tsconfig.json` 中的 `outDir`
+2. 确认 `dist` 文件夹可写
+3. 尝试手动执行构建命令
 
 ---
 
-## 🙌 致谢
+## 📝 更新日志
 
-* 类型定义来自 [Types-for-Adobe](https://github.com/aenhancers/Types-for-Adobe)
-* 灵感来源于 [ae-script-runner](https://marketplace.visualstudio.com/items?itemName=atarabi.ae-script-runner)
+### v0.9.0（最新）
 
----
+* ✨ 新增多构建工具支持（Rollup、Webpack、esbuild、tsc）
+* 🌍 新增国际化（i18n）支持
+* ⚡ 改进配置管理机制
+* 🐛 修复配置保存问题
+* 📚 优化错误提示信息
+
+### v0.7.0
+
+* ✅ 新增 macOS 支持
+* 🔧 改进 AE 版本检测
+
+👉 [查看完整更新日志](CHANGELOG.md)
 
 ## 📄 许可证
 
-[MIT License](https://license/) © 2025 Yueli
+[MIT License](LICENSE) © 2025 Yueli
 
 ---
+
+## 🙏 致谢
+
+特别感谢以下项目：
+
+* [Types-for-Adobe](https://github.com/aenhancers/Types-for-Adobe) - 提供 AE 类型定义
+* [ae-script-runner](https://github.com/atarabi/vscode-ae-script-runner) - 插件灵感来源
+
+---
+
+## 💬 反馈与建议
+
+发现 Bug 或有新功能想法？
+
+👉 [在 GitHub 提交 Issue](https://github.com/Yuelioi/vscode-ae-script-tsx-linker/issues)

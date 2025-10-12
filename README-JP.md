@@ -5,68 +5,46 @@
 [![Windows対応](https://img.shields.io/badge/Platform-Windows-0078D6)](https://www.adobe.com/products/aftereffects.html)
 [![macOS対応](https://img.shields.io/badge/Platform-macOS-999999)](https://www.adobe.com/products/aftereffects.html)
 
-After Effects 開発者のためのVS Code拡張機能 - TypeScriptワークフローとマルチバージョンAE対応スクリプト実行環境
+VS Code から直接 **Adobe After Effects スクリプト（`.jsx`, `.tsx`, `.ts`, `.jsxbin`）** を実行できます。
 
-*▲ VS Codeからの直接スクリプト実行*
+*▲ VS Code から直接スクリプトを実行可能*
 
 [中文说明](README-ZH.md) | [English](README.md) | [Japanese](README-JP.md)
 
----
+## ✨ 機能
 
-## ✨ 主な特徴
+* 🎯 **ワンクリック実行** - After Effects スクリプトを VS Code から直接実行
+* 📦 **TypeScript 対応** - `.tsx` / `.ts` コンパイルを完全サポート
+* 🔄 **ビルドツール自動検出** - Rollup / Webpack / esbuild / tsc を自動判定
+* 🌍 **多言語対応** - 英語・中国語 UI
+* 🖥️ **クロスプラットフォーム** - Windows / macOS 対応
+* ⚡ **スマート検出** - 起動中の AE インスタンスを自動検出
 
-* **全フォーマット対応**
-  `.jsx`/`.jsxbin`/`.tsx` 形式のスクリプトを直接実行
-* **インテリジェントバージョン検出**
-  インストール済みAEバージョンの自動検出と選択メニュー表示
-* **クロスプラットフォーム対応**
-  Windows/macOS の完全互換環境
-* **TypeScript最適化**
-  Rollupビルドシステムによる最新ES機能サポート
-* **リアルタイムコンパイル**
-  ファイル監視モード（`--watch`）による即時反映
+🚀 クイックスタート
 
----
+### ① インストール
 
-## 🚀 使用方法
+VS Code Marketplace からインストールします。
 
-1. **スクリプトファイルを開く**
-   VS Codeで `.jsx`または `.tsx`ファイルを開く
-2. **スクリプトを実行**
-   * エディタ上部の **▶ スクリプト実行** ボタンをクリック
-   * 右クリックメニューから `AEスクリプトを実行`を選択
-   * ショートカット**`<kbd>`**F5** `</kbd>`**を押下
+### ② 使い方
+
+1. `.jsx`, `.tsx`, `.ts`, `.jsxbin` ファイルを開く
+2. After Effects を起動しておく
+3. エディタツールバーの ▶ **Run Script** ボタンをクリック
+
+![Version Selection](./preview/aes.png)
 
 *▲ マルチバージョンAE検出インターフェース*
 
----
+③ TypeScript プロジェクトの場合
 
-## 🛠 クイックスタート (typescript利用時)
-
-You can start with this project:  [Adobe-Scripting-With-Typescript-Demo](https://github.com/Yuelioi/Adobe-Scripting-With-Typescript-Demo)
-
-### 前提条件
-
-* [Node.js](https://nodejs.org/) v16+
-* [TypeScript](https://www.typescriptlang.org/) 4.9+（TypeScript利用時）
-* [Rollup](https://rollupjs.org/) 3.x（TypeScript利用時）
-
-### インストール（TypeScript必要依存）
+依存関係をインストール：
 
 ```bash
-npm install -D \
-  rollup \
-  json5 \
-  @rollup/plugin-typescript \
-  types-for-adobe \
-  @babel/core
+npm install -D typescript rollup @rollup/plugin-typescript
 ```
 
----
-
-## ⚙ 設定詳細
-
-### 推奨tsconfig.json
+tsconfig.json を作成：
 
 ```json
 {
@@ -78,77 +56,216 @@ npm install -D \
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }
+
 ```
 
-### 標準プロジェクト構成
+## ⚙️ 設定
 
-```text
-.
-├── .vscode/
-│   └── settings.json    # 設定ファイル
-├── dist/                # コンパイル出力
-├── src/
-│   ├── lib/             # 共通ライブラリ
-│   ├── utils/           # ユーティリティ関数
-│   └── main.tsx         # エントリポイント
-├── rollup.config.js     # ビルド設定
-└── tsconfig.json        # TypeScript設定
-```
-
----
-
-## 🔧 高度な設定
-
-### Rollup設定例
-
-```javascript
-// rollup.config.js
-import typescript from '@rollup/plugin-typescript';
-
-export default {
-  input: 'src/main.tsx',
-  output: {
-    file: 'dist/script.jsx',
-    format: 'cjs'
-  },
-  plugins: [
-    typescript(),
- 
-  ]
-};
-```
-
-### multi-version AE detection configuration
+VS Code の設定（`.vscode/settings.json`）でカスタマイズ可能です：
 
 ```json
-.vscode/settings.json
-  /// ...
-  "ae-tsx-runner": {
-    "input": "....tsx",
-    "output": "....jsx",
-    "hostSpecifier": "22.0(win)/Adobe After Effects 2025(mac)" // special id for windows and app name for macOS
-  },
+{
+  "ae-tsx-runner.hostSpecifier": "aftereffects-25.0",
+  "ae-tsx-runner.buildTool": "auto"
+}
+
 ```
 
-## 📜 バージョン履歴
+### 設定オプション一覧
 
-| バージョン | リリース日 | 主な変更点                 |
-| ---------- | ---------- | -------------------------- |
-| 0.7.0      | 2025-03-14 | macOS対応を実装            |
-| 0.6.0      | 2023-04-11 | マルチバージョンAE検出機能 |
-| 0.5.0      | 2023-03-15 | .jsxbin形式サポート追加    |
+| 設定項目               | 説明                                                                  | 既定値                 |
+| ---------------------- | --------------------------------------------------------------------- | ---------------------- |
+| `hostSpecifier`      | 使用する AE バージョン（例：`aftereffects-25.0`）                   | 空欄（または選択画面） |
+| `buildTool`          | 使用ビルドツール：`auto`/`tsc`/`rollup`/`webpack`/`esbuild` | `auto`               |
+| `customBuildCommand` | カスタムビルドコマンド（例：`npm run build`）                       | `""`                 |
 
-[完全な変更履歴](https://changelog.md/)
+### Rollup 設定例
+
+`.vscode/settings.json` から入力/出力パスを読み込み可能：
+
+```js
+// rollup.config.js
+import { readFileSync } from 'fs';
+import JSON5 from 'json5';
+
+const settings = JSON5.parse(readFileSync('.vscode/settings.json', 'utf8'));
+const input = settings['ae-tsx-runner.input'] || 'src/main.tsx';
+const output = settings['ae-tsx-runner.output'] || 'dist/main.jsx';
+
+export default {
+  input,
+  output: { file: output, format: 'cjs' },
+  // ...その他の設定
+};
+
+```
 
 ---
 
-## 🙌 謝辞
+## 📁 プロジェクト構成
 
-* 型定義提供: [Types-for-Adobe](https://github.com/aenhancers/Types-for-Adobe)
-* 原型参考: [ae-script-runner](https://marketplace.visualstudio.com/items?itemName=atarabi.ae-script-runner)
+```textyour-project/
+├── .vscode/
+│   └── settings.json        # 自動生成設定
+├── src/
+│   └── main.tsx             # スクリプト本体
+├── dist/
+│   └── main.jsx             # 出力結果
+├── tsconfig.json
+├── rollup.config.js         # 任意
+└── package.json
+```
+
+---
+
+## 🔧 ビルドツール設定
+
+複数のビルドツールをサポートします。
+
+### 自動検出（推奨）
+
+```json
+{
+  "ae-tsx-runner.buildTool": "auto"
+}
+```
+
+検出順序：Rollup → Webpack → esbuild → tsc
+
+---
+
+### 手動指定
+
+```json
+{
+  "ae-tsx-runner.buildTool": "rollup"
+}
+
+```
+
+---
+
+### カスタムコマンド
+
+```json
+{
+  "ae-tsx-runner.customBuildCommand": "npm run build:ae"
+}
+
+```
+
+---
+
+## 📋 使用例
+
+### 例①：シンプルな JSX スクリプト
+
+```js
+// script.jsx
+alert("Hello from AE!");
+```
+
+▶ **Run** をクリックするだけ！
+
+---
+
+### 例②：TypeScript プロジェクト
+
+```js
+// src/main.tsx
+interface CompSettings {
+  name: string;
+  duration: number;
+}
+
+const settings: CompSettings = {
+  name: "My Comp",
+  duration: 5
+};
+
+const comp = app.project.items.addComp(
+  settings.name,
+  1920,
+  1080,
+  1,
+  settings.duration,
+  30
+);
+
+alert(`Created: ${comp.name}`);
+
+```
+
+拡張機能が自動でコンパイル・実行します！
+
+---
+
+## 🐛 トラブルシューティング
+
+### 「After Effects のインスタンスが見つかりません」
+
+➡ AE を起動してからスクリプトを実行してください。
+
+---
+
+### 「ビルドに失敗しました」
+
+➡ 次の点を確認してください：
+
+1. `tsconfig.json` の設定
+2. `npm install` で依存関係がインストール済みか
+3. 出力パネルのエラーメッセージを確認
+
+---
+
+### 「出力ファイルが生成されない」
+
+➡ 以下を確認：
+
+1. `tsconfig.json` の `outDir`
+2. `dist` フォルダの書き込み権限
+3. 手動でビルドコマンドを実行してみる
+
+---
+
+## 📝 更新履歴
+
+### v0.9.0（最新）
+
+* ✨ 複数ビルドツール対応（Rollup / Webpack / esbuild / tsc）
+* 🌍 国際化対応（i18n）
+* ⚡ 設定管理を改善
+* 🐛 設定保存の不具合を修正
+* 📚 エラーメッセージの改善
+
+---
+
+### v0.7.0
+
+* ✅ macOS 対応を追加
+* 🔧 AE バージョン検出を改善
+
+[完全な更新履歴を見る](CHANGELOG.md)
 
 ---
 
 ## 📄 ライセンス
 
-[MITライセンス](https://license/) © 2023 あなたの名前
+[MIT License](LICENSE) © 2025 Yueli
+
+---
+
+## 🙏 クレジット
+
+特別感謝：
+
+* [Types-for-Adobe](https://github.com/aenhancers/Types-for-Adobe) — 型定義の提供
+* [ae-script-runner](https://github.com/atarabi/vscode-ae-script-runner) — インスピレーション元
+
+---
+
+## 💬 フィードバック
+
+バグ報告や機能要望はぜひこちらへ：
+
+👉 [Issue を開く](https://github.com/Yuelioi/vscode-ae-script-tsx-linker/issues)
