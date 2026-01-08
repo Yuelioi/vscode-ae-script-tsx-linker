@@ -39,6 +39,8 @@ Click the ▶ Run Script button in the editor toolbar
 
 ### 3. For TypeScript Projects
 
+You can start with [Adobe After Effects TypeScript Script Demo](https://github.com/Yuelioi/adobe-after-effects-scripting-demo)
+
 Install dependencies:
 
 ```cmd

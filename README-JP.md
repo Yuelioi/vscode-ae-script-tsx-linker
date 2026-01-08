@@ -38,6 +38,8 @@ VS Code Marketplace からインストールします。
 
 ③ TypeScript プロジェクトの場合
 
+[Adobe After Effects TypeScript クリプトデモ](https://github.com/Yuelioi/adobe-after-effects-scripting-demo)から始めることができます
+
 依存関係をインストール：
 
 ```bash

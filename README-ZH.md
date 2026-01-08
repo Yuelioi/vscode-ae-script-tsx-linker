@@ -39,7 +39,13 @@
 
 ---
 
-### 3️⃣ TypeScript 项目配置安装扩展依赖
+### 3️⃣ TypeScript 项目
+
+#### 项目Demo
+
+[Adobe After Effects TypeScript 脚本示例](https://github.com/Yuelioi/adobe-after-effects-scripting-demo)
+
+#### 配置安装扩展依赖
 
 ```bash
 npm install -D typescript rollup @rollup/plugin-typescript
