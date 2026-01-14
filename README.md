@@ -69,18 +69,16 @@ Basic Settings `.vscode/settings.json`
 
 ```json
 {
-  "ae-tsx-runner.hostSpecifier": "aftereffects-25.0",
+  "ae-tsx-runner.hostSpecifier": "25.0",
   "ae-tsx-runner.buildTool": "auto"
 }
 ```
-
-More info about hostSpecifier : [Adobe.extendscript-debug hostAppSpecifier](https://marketplace.visualstudio.com/items?itemName=Adobe.extendscript-debug)
 
 ### Available Options
 
 | Setting                | Description                                                    | Default                 |
 | ---------------------- | -------------------------------------------------------------- | ----------------------- |
-| `hostSpecifier`      | AE version to use (e.g., "aftereffects-25.0")                  | `""`(or shows picker) |
+| `hostSpecifier`      | AE version to use (e.g., "25.0")                               | `""`(or shows picker) |
 | `buildTool`          | Build tool:`auto`,`tsc`,`rollup`,`webpack`,`esbuild` | `auto`                |
 | `customBuildCommand` | Custom build command (e.g.,`npm run build`)                  | `""`                  |
 
@@ -209,10 +207,6 @@ The extension will automatically compile and run!
 ---
 
 ## 🐛 Troubleshooting
-
-### "No running After Effects instance found"
-
- **Solution** : Make sure After Effects is running before executing the script.
 
 ### "Build failed"
 

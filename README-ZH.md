@@ -24,7 +24,7 @@
 
 ### 1️⃣ 安装
 
-在 VS Code 插件市场中搜索并安装 **Adobe After Effects Script Runner**
+在 VS Code 插件市场中搜索并安装 Adobe AE jsx && tsx Runner
 
 ---
 
@@ -73,21 +73,17 @@ npm install -D typescript rollup @rollup/plugin-typescript
 
 ```json
 {
-  "ae-tsx-runner.hostSpecifier": "aftereffects-25.0",
+  "ae-tsx-runner.hostSpecifier": "25.0",
   "ae-tsx-runner.buildTool": "auto"
 }
 
 ```
 
-更多关于 `hostSpecifier` 的信息请参考：
-
-👉 [Adobe.extendscript-debug hostAppSpecifier](https://marketplace.visualstudio.com/items?itemName=Adobe.extendscript-debug)
-
 ### 配置选项说明
 
 | 设置项                 | 说明                                                                  | 默认值                       |
 | ---------------------- | --------------------------------------------------------------------- | ---------------------------- |
-| `hostSpecifier`      | 要使用的 AE 版本（如 `"aftereffects-25.0"`）                        | `""`（若为空则弹出选择器） |
+| `hostSpecifier`      | 要使用的 AE 版本（如 `"25.0"`）                                     | `""`（若为空则弹出选择器） |
 | `buildTool`          | 构建工具类型：`auto`、`tsc`、`rollup`、`webpack`、`esbuild` | `auto`                     |
 | `customBuildCommand` | 自定义构建命令（例如 `npm run build`）                              | `""`                       |
 
@@ -192,12 +188,6 @@ alert(`已创建合成: ${comp.name}`);
 插件会自动编译并运行脚本！
 
 ## 🐛 常见问题（FAQ）
-
-### ❌ “No running After Effects instance found”
-
- **解决方案** ：运行脚本前请确保 AE 已启动。
-
----
 
 ### ⚠️ “Build failed”
 
